@@ -1,0 +1,348 @@
+/* ========================================== */
+/* DASHBOARD CONTAINER */
+/* ========================================== */
+.dashboard-container {
+    min-height: 100vh;
+    background: var(--color-gray-50);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ========================================== */
+/* HEADER */
+/* ========================================== */
+.dashboard-header {
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-left h1 {
+    font-size: 22px;
+    color: var(--color-gray-900);
+    font-weight: 700;
+}
+
+.header-subtitle {
+    font-size: 13px;
+    color: var(--color-gray-600);
+    margin-top: 2px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-gray-800);
+}
+
+.user-rol {
+    font-size: 12px;
+    color: var(--color-gray-500);
+    text-transform: capitalize;
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--color-gray-200);
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-gray-700);
+    transition: var(--transition);
+}
+
+.btn-logout:hover {
+    background: #fde8e8;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+/* ========================================== */
+/* STATS GRID */
+/* ========================================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.stat-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--color-primary);
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-gray-900);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--color-gray-600);
+    margin-top: 2px;
+}
+
+/* ========================================== */
+/* MAIN CONTENT */
+/* ========================================== */
+.dashboard-main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================== */
+/* CARDS */
+/* ========================================== */
+.card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+}
+
+.card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray-800);
+    margin-bottom: 16px;
+}
+
+/* ========================================== */
+/* PROGRESS BAR */
+/* ========================================== */
+.progress-container {
+    background: var(--color-gray-200);
+    border-radius: 50px;
+    height: 28px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-white);
+    transition: width 0.8s ease;
+    min-width: 40px;
+}
+
+.progress-bar.progress-high {
+    background: linear-gradient(90deg, var(--color-warning), var(--color-danger));
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--color-gray-600);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* ========================================== */
+/* LOADING */
+/* ========================================== */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    gap: 12px;
+    color: var(--color-gray-500);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--color-gray-200);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================== */
+/* EMPTY STATE */
+/* ========================================== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: var(--color-gray-500);
+    text-align: center;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.empty-sub {
+    font-size: 14px;
+    color: var(--color-gray-400);
+}
+
+/* ========================================== */
+/* MOROSOS LIST */
+/* ========================================== */
+.morosos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.moroso-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--color-gray-50);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--color-danger);
+    transition: var(--transition);
+}
+
+.moroso-item:hover {
+    background: var(--color-gray-100);
+    transform: translateX(4px);
+}
+
+.moroso-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.moroso-nombre {
+    font-weight: 600;
+    color: var(--color-gray-800);
+    font-size: 14px;
+}
+
+.moroso-detalle {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--color-gray-500);
+}
+
+.moroso-deuda {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.deuda-label {
+    font-size: 11px;
+    color: var(--color-gray-400);
+    text-transform: uppercase;
+}
+
+.deuda-monto {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-danger);
+}
+
+/* ========================================== */
+/* FLEX UTILITIES */
+/* ========================================== */
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ========================================== */
+/* FOOTER */
+/* ========================================== */
+.dashboard-footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 12px;
+    color: var(--color-gray-400);
+    border-top: 1px solid var(--color-gray-200);
+    margin-top: 8px;
+}
+
+.dashboard-footer p:first-child {
+    font-weight: 500;
+    color: var(--color-gray-500);
+}
+
+.dashboard-footer p:last-child {
+    color: var(--color-gray-400);
+}
