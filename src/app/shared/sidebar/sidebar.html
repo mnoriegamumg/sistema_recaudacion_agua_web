@@ -1,0 +1,19 @@
+<aside class="sidebar" aria-label="Menú principal">
+    <a class="brand" routerLink="/dashboard">
+        <span class="brand-mark">AG</span>
+        <span><strong>Agua Clara</strong><small>Gestión municipal</small></span>
+    </a>
+    <span class="caption">Módulos</span>
+    <nav class="nav-list">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><span>▦</span> Resumen</a>
+        <a class="nav-link" routerLink="/gestion/contadores" routerLinkActive="active"><span>⌁</span> Contadores</a>
+        <a class="nav-link" routerLink="/gestion/clientes" routerLinkActive="active"><span>◎</span> Clientes</a>
+        <a class="nav-link" routerLink="/pagos" routerLinkActive="active"><span>＋</span> Pagos</a>
+        <a class="nav-link" routerLink="/gestion/morosidad" routerLinkActive="active"><span>◒</span> Morosidad</a>
+        <a class="nav-link" routerLink="/gestion/tarifas" routerLinkActive="active"><span>◈</span> Tarifas</a>
+    </nav>
+    <div class="sidebar-footer">
+        <span class="user">{{ auth.getUsuario()?.nombre || 'Usuario' }}</span>
+        <button type="button" (click)="logout()">↪ Cerrar sesión</button>
+    </div>
+</aside>

@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, SidebarComponent],
     templateUrl: './dashboard.html',
     styleUrls: ['./dashboard.css']
 })
@@ -36,36 +38,29 @@ export class DashboardComponent implements OnInit {
     cargarDatos(): void {
         this.loading = true;
 
-        // Cargar resumen de morosidad
-        this.apiService.getResumenMorosidad().subscribe({
-            next: (response) => {
-                if (response.success) {
-                    this.resumenMorosidad = response.data;
-                    this.totalContadores = response.data.total_contadores || 0;
-                    this.totalMorosos = response.data.morosos || 0;
-                    this.totalAdeudado = response.data.total_adeudado || 0;
-                    
-                    if (this.totalContadores > 0) {
-                        this.porcentajeMorosidad = (this.totalMorosos / this.totalContadores) * 100;
-                    }
-                }
+        forkJoin({
+            contadores: this.apiService.getContadores(),
+            morosidad: this.apiService.getResumenMorosidad(),
+            morosos: this.apiService.getMorosos()
+        }).subscribe({
+            next: ({ contadores, morosidad, morosos }) => {
+                const contadoresData = Array.isArray(contadores?.data) ? contadores.data : [];
+                const morososData = Array.isArray(morosos?.data) ? morosos.data : [];
+
+                this.resumenMorosidad = morosidad?.data || {};
+                this.totalContadores = contadores?.meta?.total ?? contadoresData.length;
+                this.totalMorosos = morosos?.meta?.total ?? morososData.length;
+                this.totalAdeudado = morosidad?.data?.total_adeudado || 0;
+                this.morosos = morososData.slice(0, 5);
+                this.porcentajeMorosidad = this.totalContadores > 0
+                    ? (this.totalMorosos / this.totalContadores) * 100
+                    : 0;
             },
             error: () => {
                 this.totalContadores = 0;
                 this.totalMorosos = 0;
                 this.totalAdeudado = 0;
                 this.porcentajeMorosidad = 0;
-            }
-        });
-
-        // Cargar lista de morosos (últimos 5)
-        this.apiService.getMorosos().subscribe({
-            next: (response) => {
-                if (response.success) {
-                    this.morosos = response.data.slice(0, 5);
-                }
-            },
-            error: () => {
                 this.morosos = [];
             }
         });

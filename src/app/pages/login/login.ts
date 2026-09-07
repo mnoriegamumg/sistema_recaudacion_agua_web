@@ -12,8 +12,8 @@ import { AuthService } from '../../services/auth.service';
     styleUrls: ['./login.css']
 })
 export class LoginComponent {
-    email: string = '';
-    password: string = '';
+    email: string = 'admin@municipalidad.com';
+    password: string = 'password';
     isLoading: boolean = false;
     error: string = '';
 
