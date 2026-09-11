@@ -9,6 +9,9 @@
         <a class="nav-link" routerLink="/gestion/contadores" routerLinkActive="active"><span>⌁</span> Contadores</a>
         <a class="nav-link" routerLink="/gestion/clientes" routerLinkActive="active"><span>◎</span> Clientes</a>
         <a class="nav-link" routerLink="/pagos" routerLinkActive="active"><span>＋</span> Pagos</a>
+        @if (auth.getUsuario()?.rol === 'admin') {
+            <a class="nav-link" routerLink="/usuarios" routerLinkActive="active"><span>♙</span> Usuarios</a>
+        }
         <a class="nav-link" routerLink="/gestion/morosidad" routerLinkActive="active"><span>◒</span> Morosidad</a>
         <a class="nav-link" routerLink="/gestion/tarifas" routerLinkActive="active"><span>◈</span> Tarifas</a>
     </nav>

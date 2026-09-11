@@ -2,41 +2,109 @@
     <app-sidebar />
 
     <main class="main-content">
-        <header class="topbar"><div><span class="eyebrow">Administración</span><h1>Centro de registros</h1></div><button class="mobile-logout" type="button" (click)="logout()" aria-label="Cerrar sesión">↪</button></header>
-        <section class="heading"><div><span class="eyebrow">{{ section().icon }} Gestión operativa</span><h2>{{ section().label }}</h2><p>{{ section().description }}</p></div><button class="primary" type="button" (click)="openForm()">＋ Nuevo registro</button></section>
+        <header class="topbar">
+            <div><span class="eyebrow">Administración</span>
+                <h1>Centro de registros</h1>
+            </div><button class="mobile-logout" type="button" (click)="logout()" aria-label="Cerrar sesión">↪</button>
+        </header>
+        <section class="heading">
+            <div><span class="eyebrow">{{ section().icon }} Gestión operativa</span>
+                <h2>{{ section().label }}</h2>
+                <p>{{ section().description }}</p>
+            </div><button class="primary" type="button" (click)="openForm()">＋ Nuevo registro</button>
+        </section>
         @if (message()) { <div class="notice success" role="status">{{ message() }}</div> }
         @if (error()) { <div class="notice error" role="alert">{{ error() }}</div> }
         <section class="records-card">
-            <div class="card-header"><div><span class="eyebrow">Registros actuales</span><strong>{{ records().length }} resultados</strong></div><button class="refresh" type="button" (click)="loadRecords()" [disabled]="loading()">↻ Actualizar</button></div>
-            @if (loading()) { <div class="state"><span class="spinner"></span><p>Cargando registros...</p></div> }
-            @else if (records().length === 0) { <div class="state"><span class="empty-icon">◌</span><strong>Aún no hay registros</strong><p>Agrega el primer registro de {{ section().label.toLowerCase() }}.</p><button class="link-button" type="button" (click)="openForm()">＋ Agregar ahora</button></div> }
-            @else { <div class="table-scroll"><table><thead><tr>@for (field of section().fields; track field.name) { <th>{{ field.label }}</th> }</tr></thead><tbody>@for (record of records(); track $index) { <tr>@for (field of section().fields; track field.name) { <td>{{ display(record, field) }}</td> }</tr> }</tbody></table></div> }
+            <div class="card-header">
+                <div><span class="eyebrow">Registros actuales</span><strong>{{ records().length }} resultados</strong>
+                </div><button class="refresh" type="button" (click)="loadRecords()" [disabled]="loading()">↻
+                    Actualizar</button>
+            </div>
+            @if (loading()) { <div class="state"><span class="spinner"></span>
+                <p>Cargando registros...</p>
+            </div> }
+            @else if (records().length === 0) { <div class="state"><span class="empty-icon">◌</span><strong>Aún no hay
+                    registros</strong>
+                <p>Agrega el primer registro de {{ section().label.toLowerCase() }}.</p><button class="link-button"
+                    type="button" (click)="openForm()">＋ Agregar ahora</button>
+            </div> }
+            @else { <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>@for (field of section().fields; track field.name) { <th>{{ field.label }}</th> }</tr>
+                    </thead>
+                    <tbody>@for (record of records(); track $index) { <tr>@for (field of section().fields; track
+                            field.name) { <td>{{ display(record, field) }}</td> }</tr> }</tbody>
+                </table>
+            </div> }
         </section>
     </main>
 </div>
 
 @if (showForm()) {
-<div class="backdrop" role="presentation" (click)="closeForm()"><section class="modal" role="dialog" aria-modal="true" [attr.aria-label]="'Nuevo registro de ' + section().label" (click)="$event.stopPropagation()">
-    <div class="modal-header"><div><span class="eyebrow">Nuevo registro</span><h2>{{ section().label }}</h2></div><button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button></div>
-    <form (ngSubmit)="save()"><div class="form-grid">@for (field of section().fields; track field.name) { <label class="field"><span>{{ field.label }} @if (field.required) { <em>*</em> }</span>
-        @if (field.options) { <select [value]="form()[field.name]" (change)="updateField(field.name, $any($event.target).value)" [required]="field.required"><option value="" disabled>Selecciona una opción</option>@for (option of field.options; track option) { <option [value]="option">{{ option | titlecase }}</option> }</select> }
-        @else { <input [type]="field.type || 'text'" [value]="form()[field.name]" (input)="updateField(field.name, $any($event.target).value)" (blur)="section().key === 'clientes' && field.name === 'codigo_contador' && verifyClientCounter()" [required]="field.required" [placeholder]="field.label"> }
-        @if (section().key === 'clientes' && field.name === 'codigo_contador' && checkingCounter()) { <small>Verificando código...</small> }
-        @if (section().key === 'clientes' && field.name === 'codigo_contador' && counterValidated()) { <small class="field-success">Contador encontrado.</small> }
-    </label> }</div><div class="actions"><button class="cancel" type="button" (click)="closeForm()">Cancelar</button><button class="primary" type="submit" [disabled]="saving() || (section().key === 'clientes' && (checkingCounter() || !counterValidated()))">{{ saving() ? 'Guardando...' : 'Guardar registro' }}</button></div></form>
-</section></div>
+<div class="backdrop" role="presentation" (click)="closeForm()">
+    <section class="modal" role="dialog" aria-modal="true" [attr.aria-label]="'Nuevo registro de ' + section().label"
+        (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div><span class="eyebrow">Nuevo registro</span>
+                <h2>{{ section().label }}</h2>
+            </div><button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button>
+        </div>
+        <form (ngSubmit)="save()">
+            <div class="form-grid">@for (field of section().fields; track field.name) { <label class="field"><span>{{
+                        field.label }} @if (field.required) { <em>*</em> }</span>
+                    @if (field.options) { <select [value]="form()[field.name]"
+                        (change)="updateField(field.name, $any($event.target).value)" [required]="field.required">
+                        <option value="" disabled>Selecciona una opción</option>@for (option of field.options; track
+                        option) { <option [value]="option">{{ option | titlecase }}</option> }
+                    </select> }
+                    @else { <input [type]="field.type || 'text'" [value]="form()[field.name]"
+                        (input)="updateField(field.name, $any($event.target).value)"
+                        (blur)="section().key === 'clientes' && field.name === 'codigo_contador' && verifyClientCounter()"
+                        [required]="field.required" [placeholder]="field.label"> }
+                    @if (section().key === 'clientes' && field.name === 'codigo_contador' && checkingCounter()) {
+                    <small>Verificando código...</small> }
+                    @if (section().key === 'clientes' && field.name === 'codigo_contador' && counterValidated()) {
+                    <small class="field-success">Contador encontrado.</small> }
+                </label> }</div>
+            <div class="actions"><button class="cancel" type="button" (click)="closeForm()">Cancelar</button><button
+                    class="primary" type="submit"
+                    [disabled]="saving() || (section().key === 'clientes' && (checkingCounter() || !counterValidated()))">{{
+                    saving() ? 'Guardando...' : 'Guardar registro' }}</button></div>
+        </form>
+    </section>
+</div>
 }
 
 @if (showCounterForm()) {
-<div class="backdrop counter-backdrop" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-label="Nuevo contador">
-    <div class="modal-header"><div><span class="eyebrow">Contador no encontrado</span><h2>Nuevo contador</h2></div><button class="close" type="button" (click)="closeCounterForm()" aria-label="Cerrar">×</button></div>
-    <p class="modal-description">Registra el contador para continuar con el cliente.</p>
-    @if (counterError()) { <div class="notice error" role="alert">{{ counterError() }}</div> }
-    <form (ngSubmit)="saveCounter()"><div class="form-grid">
-        <label class="field"><span>Código de contador <em>*</em></span><input type="text" [value]="counterForm().codigo_contador" (input)="updateCounterField('codigo_contador', $any($event.target).value)" required></label>
-        <label class="field"><span>Nombre del propietario <em>*</em></span><input type="text" [value]="counterForm().nombre_propietario" (input)="updateCounterField('nombre_propietario', $any($event.target).value)" required></label>
-        <label class="field"><span>DPI</span><input type="text" [value]="counterForm().dpi" (input)="updateCounterField('dpi', $any($event.target).value)"></label>
-        <label class="field"><span>NIT</span><input type="text" [value]="counterForm().nit" (input)="updateCounterField('nit', $any($event.target).value)"></label>
-    </div><div class="actions"><button class="cancel" type="button" (click)="closeCounterForm()">Cancelar</button><button class="primary" type="submit" [disabled]="savingCounter()">{{ savingCounter() ? 'Guardando...' : 'Crear contador' }}</button></div></form>
-</section></div>
+<div class="backdrop counter-backdrop" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-label="Nuevo contador">
+        <div class="modal-header">
+            <div><span class="eyebrow">Contador no encontrado</span>
+                <h2>Nuevo contador</h2>
+            </div><button class="close" type="button" (click)="closeCounterForm()" aria-label="Cerrar">×</button>
+        </div>
+        <p class="modal-description">Registra el contador para continuar con el cliente.</p>
+        @if (counterError()) { <div class="notice error" role="alert">{{ counterError() }}</div> }
+        <form (ngSubmit)="saveCounter()">
+            <div class="form-grid">
+                <label class="field"><span>Código de contador <em>*</em></span><input type="text"
+                        [value]="counterForm().codigo_contador"
+                        (input)="updateCounterField('codigo_contador', $any($event.target).value)" required></label>
+                <label class="field"><span>Nombre del propietario <em>*</em></span><input type="text"
+                        [value]="counterForm().nombre_propietario"
+                        (input)="updateCounterField('nombre_propietario', $any($event.target).value)" required></label>
+                <label class="field"><span>DPI</span><input type="text" [value]="counterForm().dpi"
+                        (input)="updateCounterField('dpi', $any($event.target).value)"></label>
+                <label class="field"><span>NIT</span><input type="text" [value]="counterForm().nit"
+                        (input)="updateCounterField('nit', $any($event.target).value)"></label>
+            </div>
+            <div class="actions"><button class="cancel" type="button"
+                    (click)="closeCounterForm()">Cancelar</button><button class="primary" type="submit"
+                    [disabled]="savingCounter()">{{ savingCounter() ? 'Guardando...' : 'Crear contador' }}</button>
+            </div>
+        </form>
+    </section>
+</div>
 }

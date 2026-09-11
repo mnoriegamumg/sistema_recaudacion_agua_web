@@ -19,6 +19,20 @@ export class PagosComponent implements OnInit {
     readonly auth = inject(AuthService);
     private readonly router = inject(Router);
     private readonly api = inject(ApiService);
+    private readonly monthNames = [
+        'ENERO',
+        'FEBRERO',
+        'MARZO',
+        'ABRIL',
+        'MAYO',
+        'JUNIO',
+        'JULIO',
+        'AGOSTO',
+        'SEPTIEMBRE',
+        'OCTUBRE',
+        'NOVIEMBRE',
+        'DICIEMBRE'
+    ];
 
     readonly fields: PaymentField[] = [
         { name: 'codigo_contador', label: 'Código de contador', required: true },
@@ -212,6 +226,10 @@ export class PagosComponent implements OnInit {
 
     display(record: Record<string, unknown>, field: PaymentField): string {
         const value = record[field.name];
+        if (field.name === 'mes_pagado' && value !== undefined && value !== null && value !== '') {
+            const month = Number(value);
+            return this.monthNames[month - 1] ?? String(value);
+        }
         return value === undefined || value === null || value === '' ? '-' : String(value);
     }
 

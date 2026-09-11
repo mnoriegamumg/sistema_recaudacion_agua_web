@@ -3,7 +3,9 @@ import { LoginComponent } from './pages/login/login';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { GestionComponent } from './pages/gestion/gestion';
 import { PagosComponent } from './pages/pagos/pagos';
+import { UsuariosComponent } from './pages/usuarios/usuarios';
 import { AuthGuard } from './core/guards/auth.guard';
+import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -12,6 +14,11 @@ export const routes: Routes = [
         path: 'dashboard', 
         component: DashboardComponent,
         canActivate: [AuthGuard]
+    },
+    {
+        path: 'usuarios',
+        component: UsuariosComponent,
+        canActivate: [AuthGuard, AdminGuard]
     },
     {
         path: 'gestion/pagos',

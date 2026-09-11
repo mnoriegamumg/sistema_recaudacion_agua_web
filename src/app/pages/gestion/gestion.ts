@@ -24,25 +24,33 @@ export class GestionComponent implements OnInit {
     private readonly api = inject(ApiService);
 
     readonly sections: Section[] = [
-        { key: 'contadores', label: 'Contadores', icon: '⌁', description: 'Administra medidores y propietarios.', fields: [
-            { name: 'codigo_contador', label: 'Código del contador', required: true },
-            { name: 'nombre_propietario', label: 'Nombre del propietario', required: true },
-            { name: 'dpi', label: 'DPI' }, { name: 'nit', label: 'NIT' },
-            { name: 'estado', label: 'Estado', required: true, options: ['activo', 'inactivo', 'suspendido'] }
-        ] },
-        { key: 'clientes', label: 'Clientes', icon: '◎', description: 'Consulta y registra usuarios del servicio.', fields: [
-            { name: 'nombre', label: 'Nombre completo', required: true }, { name: 'dpi', label: 'DPI' },
-            { name: 'direccion', label: 'Dirección' }, { name: 'telefono', label: 'Teléfono' },
-            { name: 'codigo_contador', label: 'Código del contador', required: true }
-        ] },
-        { key: 'morosidad', label: 'Morosidad', icon: '◒', description: 'Calcula y revisa saldos pendientes.', fields: [
-            { name: 'mes', label: 'Mes a calcular', type: 'number', required: true },
-            { name: 'ano', label: 'Año a calcular', type: 'number', required: true }
-        ] },
-        { key: 'tarifas', label: 'Tarifas', icon: '◈', description: 'Define las tarifas vigentes por servicio.', fields: [
-            { name: 'nombre', label: 'Nombre de tarifa', required: true }, { name: 'monto', label: 'Monto', type: 'number', required: true },
-            { name: 'comunidad', label: 'Comunidad' }, { name: 'fecha_inicio', label: 'Fecha de inicio', type: 'date', required: true }
-        ] }
+        {
+            key: 'contadores', label: 'Contadores', icon: '⌁', description: 'Administra medidores y propietarios.', fields: [
+                { name: 'codigo_contador', label: 'Código del contador', required: true },
+                { name: 'nombre_propietario', label: 'Nombre del propietario', required: true },
+                { name: 'dpi', label: 'DPI' }, { name: 'nit', label: 'NIT' },
+                { name: 'estado', label: 'Estado', required: true, options: ['activo', 'inactivo', 'suspendido'] }
+            ]
+        },
+        {
+            key: 'clientes', label: 'Clientes', icon: '◎', description: 'Consulta y registra usuarios del servicio.', fields: [
+                { name: 'nombre', label: 'Nombre completo', required: true }, { name: 'dpi', label: 'DPI' },
+                { name: 'direccion', label: 'Dirección' }, { name: 'telefono', label: 'Teléfono' },
+                { name: 'codigo_contador', label: 'Código del contador', required: true }
+            ]
+        },
+        {
+            key: 'morosidad', label: 'Morosidad', icon: '◒', description: 'Calcula y revisa saldos pendientes.', fields: [
+                { name: 'mes', label: 'Mes a calcular', type: 'number', required: true },
+                { name: 'ano', label: 'Año a calcular', type: 'number', required: true }
+            ]
+        },
+        {
+            key: 'tarifas', label: 'Tarifas', icon: '◈', description: 'Define las tarifas vigentes por servicio.', fields: [
+                { name: 'nombre', label: 'Nombre de tarifa', required: true }, { name: 'monto', label: 'Monto', type: 'number', required: true },
+                { name: 'comunidad', label: 'Comunidad' }, { name: 'fecha_inicio', label: 'Fecha de inicio', type: 'date', required: true }
+            ]
+        }
     ];
 
     readonly section = signal<Section>(this.sections[0]);

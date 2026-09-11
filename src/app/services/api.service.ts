@@ -20,6 +20,21 @@ export class ApiService {
     }
 
     // ==========================================
+    // USUARIOS
+    // ==========================================
+    getUsuarios(): Observable<any> {
+        return this.http.get(`${environment.apiUrl}/usuarios`, { headers: this.getHeaders() });
+    }
+
+    createUsuario(data: any): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/usuarios`, data, { headers: this.getHeaders() });
+    }
+
+    updateUsuario(id: number, data: any): Observable<any> {
+        return this.http.put(`${environment.apiUrl}/usuarios/${id}`, data, { headers: this.getHeaders() });
+    }
+
+    // ==========================================
     // CONTADORES
     // ==========================================
     getContadores(): Observable<any> {

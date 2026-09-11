@@ -1,0 +1,129 @@
+<div class="layout">
+    <app-sidebar />
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <span class="eyebrow">Administración</span>
+                <h1>Centro de registros</h1>
+            </div>
+            <button class="mobile-logout" type="button" (click)="logout()" aria-label="Cerrar sesión">↪</button>
+        </header>
+
+        <section class="heading">
+            <div>
+                <span class="eyebrow">♙ Administración del sistema</span>
+                <h2>Usuarios</h2>
+                <p>Crea y actualiza las cuentas con acceso al sistema.</p>
+            </div>
+            <button class="primary" type="button" (click)="openCreateForm()">＋ Nuevo usuario</button>
+        </section>
+
+        @if (message()) { <div class="notice success" role="status">{{ message() }}</div> }
+        @if (error() && !showForm()) { <div class="notice error" role="alert">{{ error() }}</div> }
+
+        <section class="records-card">
+            <div class="card-header">
+                <div>
+                    <span class="eyebrow">Cuentas registradas</span>
+                    <strong>{{ records().length }} usuarios</strong>
+                </div>
+                <button class="refresh" type="button" (click)="loadRecords()" [disabled]="loading()">
+                    ↻ Actualizar
+                </button>
+            </div>
+
+            @if (loading()) {
+                <div class="state"><span class="spinner"></span><p>Cargando usuarios...</p></div>
+            } @else if (records().length === 0) {
+                <div class="state">
+                    <span class="empty-icon">◎</span>
+                    <strong>Aún no hay usuarios</strong>
+                    <p>Agrega la primera cuenta del sistema.</p>
+                    <button class="link-button" type="button" (click)="openCreateForm()">＋ Agregar ahora</button>
+                </div>
+            } @else {
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Activo</th>
+                                <th>Creado</th>
+                                <th>Actualizado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of records(); track user.id_usuario) {
+                                <tr>
+                                    <td>{{ user.id_usuario }}</td>
+                                    <td>{{ user.nombre_completo }}</td>
+                                    <td>{{ user.correo }}</td>
+                                    <td>{{ user.rol }}</td>
+                                    <td>{{ isActive(user.activo) ? 'Sí' : 'No' }}</td>
+                                    <td>{{ displayDate(user.created_at) }}</td>
+                                    <td>{{ displayDate(user.updated_at) }}</td>
+                                    <td><button class="link-button" type="button" (click)="openEditForm(user)">Editar</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    </main>
+</div>
+
+@if (showForm()) {
+    <div class="backdrop" role="presentation" (click)="closeForm()">
+        <section class="modal" role="dialog" aria-modal="true" [attr.aria-label]="editingId() ? 'Editar usuario' : 'Nuevo usuario'" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <span class="eyebrow">{{ editingId() ? 'Actualizar cuenta' : 'Nueva cuenta' }}</span>
+                    <h2>{{ editingId() ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+                </div>
+                <button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button>
+            </div>
+
+            @if (error()) { <div class="notice error" role="alert">{{ error() }}</div> }
+
+            <form (ngSubmit)="save()">
+                <div class="form-grid">
+                    <label class="field">
+                        <span>Nombre completo <em>*</em></span>
+                        <input type="text" [value]="form().nombre_completo" (input)="updateField('nombre_completo', $any($event.target).value)" required>
+                    </label>
+                    <label class="field">
+                        <span>Correo electrónico <em>*</em></span>
+                        <input type="email" [value]="form().correo" (input)="updateField('correo', $any($event.target).value)" required>
+                    </label>
+                    <label class="field">
+                        <span>Contraseña {{ editingId() ? '(opcional)' : '' }} @if (!editingId()) { <em>*</em> }</span>
+                        <input type="password" [value]="form().password" (input)="updateField('password', $any($event.target).value)" [required]="!editingId()">
+                    </label>
+                    <label class="field">
+                        <span>Rol <em>*</em></span>
+                        <select [value]="form().rol" (change)="updateField('rol', $any($event.target).value)" required>
+                            @for (role of roles; track role) { <option [value]="role">{{ role | titlecase }}</option> }
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Estado</span>
+                        <select [value]="form().activo" (change)="updateField('activo', $any($event.target).value === 'true')">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="actions">
+                    <button class="cancel" type="button" (click)="closeForm()">Cancelar</button>
+                    <button class="primary" type="submit" [disabled]="saving()">{{ saving() ? 'Guardando...' : 'Guardar usuario' }}</button>
+                </div>
+            </form>
+        </section>
+    </div>
+}

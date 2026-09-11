@@ -6,15 +6,15 @@
 .layout {
     min-height: 100vh;
     display: flex;
-    background: #f4f7f8;
-    color: #173042
+    background: var(--color-gray-50);
+    color: var(--color-gray-900)
 }
 
 .sidebar {
     width: 245px;
     flex: 0 0 245px;
-    background: #123b4d;
-    color: #dbeaf0;
+    background: var(--color-primary-dark);
+    color: var(--color-secondary-lighter);
     padding: 28px 15px 18px;
     display: flex;
     flex-direction: column
@@ -35,8 +35,8 @@
     width: 38px;
     height: 38px;
     border-radius: 8px;
-    background: #e5a84b;
-    color: #123b4d;
+    background: var(--color-secondary-light);
+    color: var(--color-primary-dark);
     font-size: 12px;
     font-weight: 800
 }
@@ -52,13 +52,13 @@
 
 .brand small {
     font-size: 11px;
-    color: #91b3c0;
+    color: var(--color-secondary-light);
     margin-top: 4px
 }
 
 .caption {
     margin: 0 12px 10px;
-    color: #769ba8;
+    color: var(--color-secondary-light);
     text-transform: uppercase;
     letter-spacing: 1.2px;
     font-size: 10px
@@ -75,7 +75,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px;
-    color: #aac7d0;
+    color: var(--color-secondary-light);
     border-radius: 7px;
     text-decoration: none;
     font-size: 13px
@@ -84,29 +84,29 @@
 .nav-link span {
     width: 18px;
     text-align: center;
-    color: #80b7c7;
+    color: var(--color-secondary);
     font-size: 18px
 }
 
 .nav-link:hover,
 .nav-link.active {
     color: #fff;
-    background: #1e596d
+    background: var(--color-primary)
 }
 
 .nav-link.active {
-    box-shadow: inset 3px 0 #e5a84b
+    box-shadow: inset 3px 0 var(--color-secondary)
 }
 
 .sidebar-footer {
     margin-top: auto;
-    border-top: 1px solid #2b5a6a;
+    border-top: 1px solid var(--color-primary);
     padding: 18px 8px 0
 }
 
 .user {
     display: block;
-    color: #dcecf0;
+    color: var(--color-secondary-lighter);
     font-size: 12px;
     margin-bottom: 15px
 }
@@ -114,8 +114,8 @@
 .sidebar-footer button,
 .mobile-logout {
     border: 0;
-    background: none;
-    color: #9fbdc7;
+    background: transparent;
+    color: var(--color-secondary-light);
     cursor: pointer;
     font-size: 12px;
     padding: 4px 0
@@ -139,7 +139,7 @@
 }
 
 .eyebrow {
-    color: #6c8a93;
+    color: var(--color-gray-600);
     text-transform: uppercase;
     letter-spacing: 1.3px;
     font-size: 10px;
@@ -149,7 +149,7 @@
 .topbar h1 {
     font-size: 24px;
     margin-top: 8px;
-    color: #173042
+    color: var(--color-gray-900)
 }
 
 .heading {
@@ -166,18 +166,18 @@
     line-height: 1;
     letter-spacing: -1px;
     margin: 12px 0 9px;
-    color: #14394c
+    color: var(--color-primary-dark)
 }
 
 .heading p {
     font-size: 14px;
-    color: #77919a
+    color: var(--color-gray-600)
 }
 
 .primary {
     border: 0;
     border-radius: 6px;
-    background: #d99432;
+    background: var(--color-primary);
     color: #fff;
     padding: 12px 17px;
     font-size: 12px;
@@ -187,7 +187,7 @@
 }
 
 .primary:hover {
-    background: #bd7620
+    background: var(--color-primary-dark)
 }
 
 .primary:disabled {
@@ -202,23 +202,23 @@
 }
 
 .success {
-    background: #e4f3ec;
+    background: #e8f6ef;
     color: #28704f;
-    border-left: 3px solid #4ca577
+    border-left: 3px solid var(--color-accent)
 }
 
 .error {
     background: #fbe9e6;
     color: #a94b3e;
-    border-left: 3px solid #df6c5c
+    border-left: 3px solid var(--color-danger)
 }
 
 .records-card {
-    background: #fff;
-    border: 1px solid #e1e9eb;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(23, 48, 66, .045)
+    box-shadow: var(--shadow-md)
 }
 
 .card-header {
@@ -226,20 +226,20 @@
     justify-content: space-between;
     align-items: center;
     padding: 22px 24px 19px;
-    border-bottom: 1px solid #e7edef
+    border-bottom: 1px solid var(--color-gray-200)
 }
 
 .card-header strong {
     display: block;
-    color: #173042;
+    color: var(--color-gray-900);
     font-size: 15px;
     margin-top: 6px
 }
 
 .refresh {
-    border: 1px solid #d9e3e5;
-    background: #fff;
-    color: #56737d;
+    border: 1px solid var(--color-gray-300);
+    background: var(--color-gray-50);
+    color: var(--color-gray-700);
     border-radius: 5px;
     padding: 8px 11px;
     cursor: pointer;
@@ -260,21 +260,21 @@ th,
 td {
     text-align: left;
     padding: 15px 24px;
-    border-bottom: 1px solid #edf1f2;
+    border-bottom: 1px solid var(--color-gray-100);
     white-space: nowrap;
     font-size: 12px
 }
 
 th {
-    background: #fbfcfc;
-    color: #78929b;
+    background: var(--color-gray-50);
+    color: var(--color-gray-600);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: .7px
 }
 
 td {
-    color: #415d68
+    color: var(--color-gray-700)
 }
 
 tr:last-child td {
@@ -288,14 +288,14 @@ tr:last-child td {
     align-items: center;
     justify-content: center;
     gap: 9px;
-    color: #78929b
+    color: var(--color-gray-600)
 }
 
 .spinner {
     width: 27px;
     height: 27px;
-    border: 3px solid #deeaec;
-    border-top-color: #d99432;
+    border: 3px solid var(--color-secondary-lighter);
+    border-top-color: var(--color-secondary);
     border-radius: 50%;
     animation: spin .8s linear infinite
 }
@@ -308,11 +308,11 @@ tr:last-child td {
 
 .empty-icon {
     font-size: 34px;
-    color: #b6cbd0
+    color: var(--color-secondary-light)
 }
 
 .state strong {
-    color: #315362;
+    color: var(--color-primary);
     font-size: 15px
 }
 
@@ -322,8 +322,8 @@ tr:last-child td {
 
 .link-button {
     border: 0;
-    background: none;
-    color: #b77722;
+    background: transparent;
+    color: var(--color-primary);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer
@@ -332,7 +332,7 @@ tr:last-child td {
 .backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 42, 54, .54);
+    background: rgba(14, 47, 68, .54);
     display: grid;
     place-items: center;
     padding: 20px;
@@ -343,10 +343,10 @@ tr:last-child td {
     width: min(620px, 100%);
     max-height: 90vh;
     overflow: auto;
-    background: #fff;
+    background: var(--color-white);
     border-radius: 9px;
     padding: 27px;
-    box-shadow: 0 18px 55px rgba(8, 35, 47, .25)
+    box-shadow: var(--shadow-xl)
 }
 
 .modal-header {
@@ -362,7 +362,7 @@ tr:last-child td {
 .close {
     border: 0;
     background: none;
-    color: #7b969e;
+    color: var(--color-gray-600);
     font-size: 28px;
     cursor: pointer
 }
@@ -377,23 +377,23 @@ tr:last-child td {
     display: flex;
     flex-direction: column;
     gap: 7px;
-    color: #536f78;
+    color: var(--color-gray-700);
     font-size: 12px;
     font-weight: 700
 }
 
 .field em {
-    color: #d16b46;
+    color: var(--color-danger);
     font-style: normal
 }
 
 .field input,
 .field select {
     width: 100%;
-    border: 1px solid #d9e3e5;
+    border: 1px solid var(--color-gray-300);
     border-radius: 5px;
-    background: #fbfcfc;
-    color: #2b4a56;
+    background: var(--color-gray-50);
+    color: var(--color-gray-800);
     padding: 11px 12px;
     font: inherit;
     font-weight: 400;
@@ -402,8 +402,8 @@ tr:last-child td {
 
 .field input:focus,
 .field select:focus {
-    border-color: #d99432;
-    box-shadow: 0 0 0 3px rgba(217, 148, 50, .13)
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, .15)
 }
 
 .actions {
@@ -414,10 +414,10 @@ tr:last-child td {
 }
 
 .cancel {
-    border: 1px solid #d9e3e5;
+    border: 1px solid var(--color-gray-300);
     border-radius: 6px;
-    color: #627d85;
-    background: #fff;
+    color: var(--color-gray-700);
+    background: var(--color-white);
     padding: 11px 16px;
     cursor: pointer;
     font-size: 12px
@@ -425,7 +425,7 @@ tr:last-child td {
 
 .mobile-logout {
     display: none;
-    color: #123b4d;
+    color: var(--color-primary-dark);
     font-size: 22px
 }
 
