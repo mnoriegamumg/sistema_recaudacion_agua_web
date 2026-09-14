@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://tu-dominio.com/api'
+    apiUrl: 'https://sistema-recaudacion-agua-api.onrender.com/api'
 };
