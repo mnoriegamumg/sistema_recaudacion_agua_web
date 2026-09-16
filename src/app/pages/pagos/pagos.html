@@ -32,10 +32,12 @@
             @else { <div class="table-scroll">
                 <table>
                     <thead>
-                        <tr>@for (field of fields; track field.name) { <th>{{ field.label }}</th> }</tr>
+                        <tr>@for (field of fields; track field.name) { <th>{{ field.label }}</th> }<th>Acciones</th></tr>
                     </thead>
                     <tbody>@for (record of records(); track $index) { <tr>@for (field of fields; track field.name) {
-                            <td>{{ display(record, field) }}</td> }
+                            <td>{{ display(record, field) }}</td> }<td class="row-actions"><button class="link-button" type="button"
+                                (click)="openEditForm(record)">Editar</button><button class="link-button print-link" type="button"
+                                (click)="openReceipt(record)">Imprimir</button></td>
                         </tr> }</tbody>
                 </table>
             </div> }
@@ -45,10 +47,10 @@
 
 @if (showForm()) {
 <div class="backdrop" role="presentation" (click)="closeForm()">
-    <section class="modal" role="dialog" aria-modal="true" aria-label="Nuevo pago" (click)="$event.stopPropagation()">
+    <section class="modal" role="dialog" aria-modal="true" [attr.aria-label]="editingId() ? 'Editar pago' : 'Nuevo pago'" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <div><span class="eyebrow">Nuevo registro</span>
-                <h2>Pagos</h2>
+            <div><span class="eyebrow">{{ editingId() ? 'Actualizar registro' : 'Nuevo registro' }}</span>
+                <h2>{{ editingId() ? 'Editar pago' : 'Pagos' }}</h2>
             </div><button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button>
         </div>
         <form (ngSubmit)="save()">
@@ -62,8 +64,31 @@
                     }</label> }</div>
             <div class="actions"><button class="cancel" type="button" (click)="closeForm()">Cancelar</button><button
                     class="primary" type="submit" [disabled]="saving() || checkingCounter() || !counterValidated()">{{
-                    saving() ? 'Guardando...' : 'Guardar pago' }}</button></div>
+                    saving() ? 'Guardando...' : (editingId() ? 'Actualizar pago' : 'Guardar pago') }}</button></div>
         </form>
+    </section>
+</div>
+}
+
+@if (showReceipt() && selectedPayment(); as payment) {
+<div class="backdrop receipt-backdrop" role="presentation" (click)="closeReceipt()">
+    <section class="receipt-dialog" role="dialog" aria-modal="true" aria-label="Recibo de pago" (click)="$event.stopPropagation()">
+        <div class="receipt-header"><div><span class="eyebrow">Comprobante de pago</span><h2>Recibo de pago</h2></div>
+            <button class="close" type="button" (click)="closeReceipt()" aria-label="Cerrar">×</button></div>
+        <article class="receipt-paper" id="receipt-paper">
+            <div class="receipt-brand"><strong>Sistema de Recaudación de Agua</strong><span>Comprobante oficial</span></div>
+            <div class="receipt-number"><span>No. de recibo</span><strong>{{ receiptValue('numero_recibo') }}</strong></div>
+            <div class="receipt-details">
+                <div><span>Contador</span><strong>{{ receiptValue('codigo_contador') }}</strong></div>
+                <div><span>Período pagado</span><strong>{{ receiptMonth() }} {{ receiptValue('ano_pagado') }}</strong></div>
+                <div><span>Pagado por</span><strong>{{ receiptValue('pagado_por') }}</strong></div>
+                <div><span>Identificación</span><strong>{{ receiptValue('identificacion') }}</strong></div>
+            </div>
+            <div class="receipt-total"><span>Total pagado</span><strong>{{ formatCurrency(payment['monto']) }}</strong></div>
+            <p class="receipt-note">Gracias por realizar su pago.</p>
+        </article>
+        <div class="actions receipt-actions"><button class="cancel" type="button" (click)="closeReceipt()">Cerrar</button>
+            <button class="primary" type="button" (click)="printReceipt()">Imprimir recibo</button></div>
     </section>
 </div>
 }

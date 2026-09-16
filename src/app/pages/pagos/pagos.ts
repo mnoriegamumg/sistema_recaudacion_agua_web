@@ -13,7 +13,7 @@ type CounterForm = { codigo_contador: string; nombre_propietario: string; dpi: s
     selector: 'app-pagos',
     imports: [CommonModule, FormsModule, SidebarComponent],
     templateUrl: './pagos.html',
-    styleUrl: '../gestion/gestion.css'
+    styleUrl: './pagos.css'
 })
 export class PagosComponent implements OnInit {
     readonly auth = inject(AuthService);
@@ -48,6 +48,9 @@ export class PagosComponent implements OnInit {
     readonly loading = signal(false);
     readonly saving = signal(false);
     readonly showForm = signal(false);
+    readonly editingId = signal<number | null>(null);
+    readonly showReceipt = signal(false);
+    readonly selectedPayment = signal<Record<string, unknown> | null>(null);
     readonly showCounterForm = signal(false);
     readonly checkingCounter = signal(false);
     readonly savingCounter = signal(false);
@@ -93,14 +96,51 @@ export class PagosComponent implements OnInit {
     }
 
     openForm(): void {
+        this.editingId.set(null);
         this.message.set('');
         this.error.set('');
         this.resetForm();
         this.showForm.set(true);
     }
 
+    openEditForm(record: Record<string, unknown>): void {
+        const id = this.recordId(record);
+        if (id === null) {
+            this.error.set('El registro no tiene un identificador válido para editarlo.');
+            return;
+        }
+        this.editingId.set(id);
+        this.message.set('');
+        this.error.set('');
+        this.counterValidated.set(true);
+        this.form.set({
+            codigo_contador: String(record['codigo_contador'] ?? ''),
+            id_contador: record['id_contador'] ?? '',
+            monto: record['monto'] ?? '',
+            mes_pagado: record['mes_pagado'] ?? this.currentMonth,
+            ano_pagado: record['ano_pagado'] ?? this.currentYear,
+            pagado_por: String(record['pagado_por'] ?? ''),
+            identificacion: String(record['identificacion'] ?? '')
+        });
+        this.showForm.set(true);
+    }
+
     closeForm(): void {
         this.showForm.set(false);
+    }
+
+    openReceipt(record: Record<string, unknown>): void {
+        this.selectedPayment.set(record);
+        this.showReceipt.set(true);
+    }
+
+    closeReceipt(): void {
+        this.showReceipt.set(false);
+        this.selectedPayment.set(null);
+    }
+
+    printReceipt(): void {
+        window.print();
     }
 
     verifyCounter(): void {
@@ -185,13 +225,23 @@ export class PagosComponent implements OnInit {
             return;
         }
 
+        const period = this.paymentPeriodDates(values['mes_pagado'], values['ano_pagado']);
+        if (!period) {
+            this.error.set('El mes y año del pago no son válidos.');
+            return;
+        }
+
         this.saving.set(true);
         this.error.set('');
-        this.api.registrarPago({ ...values, periodo_inicio: '', periodo_fin: '' }).subscribe({
+        const payload = { ...values, periodo_inicio: period.start, periodo_fin: period.end };
+        const request = this.editingId()
+            ? this.api.actualizarPago(this.editingId()!, payload)
+            : this.api.registrarPago(payload);
+        request.subscribe({
             next: () => {
                 this.saving.set(false);
                 this.showForm.set(false);
-                this.message.set('Pagos actualizado correctamente.');
+                this.message.set(this.editingId() ? 'Pago actualizado correctamente.' : 'Pago registrado correctamente.');
                 this.loadRecords();
             },
             error: response => {
@@ -239,6 +289,27 @@ export class PagosComponent implements OnInit {
         return field.label;
     }
 
+    recordId(record: Record<string, unknown>): number | null {
+        const value = record['id_pago'] ?? record['id'];
+        const id = Number(value);
+        return Number.isInteger(id) && id > 0 ? id : null;
+    }
+
+    receiptValue(name: string): string {
+        const value = this.selectedPayment()?.[name];
+        return value === undefined || value === null || value === '' ? '-' : String(value);
+    }
+
+    receiptMonth(): string {
+        const month = Number(this.selectedPayment()?.['mes_pagado']);
+        return this.monthNames[month - 1] ?? this.receiptValue('mes_pagado');
+    }
+
+    formatCurrency(value: unknown): string {
+        const amount = Number(value);
+        return Number.isFinite(amount) ? `Q ${amount.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Q 0.00';
+    }
+
     private resetForm(): void {
         this.counterValidated.set(false);
         this.form.set({
@@ -261,5 +332,20 @@ export class PagosComponent implements OnInit {
 
     private paymentPeriod(payment: Record<string, unknown>): number {
         return Number(payment['ano_pagado']) * 100 + Number(payment['mes_pagado']);
+    }
+
+    private paymentPeriodDates(monthValue: unknown, yearValue: unknown): { start: string; end: string } | null {
+        const month = Number(monthValue);
+        const year = Number(yearValue);
+        if (!Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1) {
+            return null;
+        }
+
+        const monthText = String(month).padStart(2, '0');
+        const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        return {
+            start: `${String(year).padStart(4, '0')}-${monthText}-01`,
+            end: `${String(year).padStart(4, '0')}-${monthText}-${String(lastDay).padStart(2, '0')}`
+        };
     }
 }

@@ -1,0 +1,130 @@
+@import '../gestion/gestion.css';
+
+.row-actions {
+	display: flex;
+	gap: 12px;
+}
+
+.print-link {
+	color: var(--color-primary);
+}
+
+.receipt-dialog {
+	width: min(510px, 100%);
+	max-height: 90vh;
+	overflow: auto;
+	background: var(--color-white);
+	border-radius: 9px;
+	padding: 27px;
+	box-shadow: var(--shadow-xl);
+}
+
+.receipt-header {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 18px;
+}
+
+.receipt-header h2 {
+	font-size: 28px;
+	margin: 10px 0 0;
+	color: var(--color-primary-dark);
+}
+
+.receipt-paper {
+	border: 1px solid var(--color-gray-200);
+	padding: 25px;
+	color: var(--color-gray-800);
+}
+
+.receipt-brand {
+	display: grid;
+	gap: 5px;
+	padding-bottom: 18px;
+	border-bottom: 2px solid var(--color-primary);
+}
+
+.receipt-brand strong {
+	color: var(--color-primary-dark);
+	font-size: 16px;
+}
+
+.receipt-brand span,
+.receipt-number span,
+.receipt-details span,
+.receipt-total span {
+	color: var(--color-gray-600);
+	font-size: 11px;
+}
+
+.receipt-number {
+	display: flex;
+	justify-content: space-between;
+	gap: 15px;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--color-gray-200);
+}
+
+.receipt-details {
+	display: grid;
+	gap: 15px;
+	padding: 20px 0;
+}
+
+.receipt-details div {
+	display: grid;
+	gap: 4px;
+}
+
+.receipt-details strong {
+	font-size: 13px;
+}
+
+.receipt-total {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding-top: 17px;
+	border-top: 2px solid var(--color-gray-200);
+}
+
+.receipt-total strong {
+	color: var(--color-primary);
+	font-size: 24px;
+}
+
+.receipt-note {
+	margin: 24px 0 0;
+	color: var(--color-gray-600);
+	font-size: 11px;
+	text-align: center;
+}
+
+@media print {
+	.layout {
+		display: none !important;
+	}
+
+	.receipt-backdrop {
+		position: static;
+		display: block;
+		padding: 0;
+		background: transparent;
+	}
+
+	.receipt-dialog {
+		display: contents;
+	}
+
+	.receipt-header,
+	.receipt-actions {
+		display: none;
+	}
+
+	.receipt-paper {
+		display: block;
+		position: static;
+		width: 100%;
+		border: 0;
+	}
+}

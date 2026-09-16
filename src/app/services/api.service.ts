@@ -103,6 +103,10 @@ export class ApiService {
         return this.http.get(`${environment.apiUrl}/pagos/${id}`, { headers: this.getHeaders() });
     }
 
+    actualizarPago(id: number, data: any): Observable<any> {
+        return this.http.put(`${environment.apiUrl}/pagos/${id}`, data, { headers: this.getHeaders() });
+    }
+
     getPagosPorContador(idContador: number, ano?: number): Observable<any> {
         let url = `${environment.apiUrl}/pagos/contador/${idContador}`;
         if (ano) url += `?ano=${ano}`;
