@@ -1,13 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
+import { PagoService } from '../../services/pago.service';
+import { ContadorService } from '../../services/contador.service';
+import { Contador } from '../../models/contador.model';
+import { PagoRequest } from '../../models/pago.model';
 import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 type PaymentField = { name: string; label: string; type?: string; required?: boolean };
 type CounterForm = { codigo_contador: string; nombre_propietario: string; dpi: string; nit: string; estado: string };
+type BulkMonth = { mes: number; nombre: string; pagado: boolean; seleccionado: boolean };
+type BulkForm = { codigo_contador: string; id_contador: number | ''; ano: number; monto: number | ''; pagado_por: string; identificacion: string };
 
 @Component({
     selector: 'app-pagos',
@@ -18,7 +25,8 @@ type CounterForm = { codigo_contador: string; nombre_propietario: string; dpi: s
 export class PagosComponent implements OnInit {
     readonly auth = inject(AuthService);
     private readonly router = inject(Router);
-    private readonly api = inject(ApiService);
+    private readonly pagos = inject(PagoService);
+    private readonly contadores = inject(ContadorService);
     private readonly monthNames = [
         'ENERO',
         'FEBRERO',
@@ -69,6 +77,18 @@ export class PagosComponent implements OnInit {
     readonly currentMonth = new Date().getMonth() + 1;
     readonly currentYear = new Date().getFullYear();
 
+    // ==========================================
+    // Pago de año completo / meses pendientes
+    // ==========================================
+    readonly showBulkForm = signal(false);
+    readonly bulkForm = signal<BulkForm>(this.emptyBulkForm());
+    readonly bulkMonths = signal<BulkMonth[]>([]);
+    readonly bulkCounterValidated = signal(false);
+    readonly bulkCheckingCounter = signal(false);
+    readonly bulkLoadingMonths = signal(false);
+    readonly bulkSaving = signal(false);
+    readonly bulkError = signal('');
+
     ngOnInit(): void {
         this.resetForm();
         this.loadRecords();
@@ -82,7 +102,7 @@ export class PagosComponent implements OnInit {
     loadRecords(): void {
         this.loading.set(true);
         this.error.set('');
-        this.api.getPagos().subscribe({
+        this.pagos.getPagos().subscribe({
             next: response => {
                 this.records.set(Array.isArray(response?.data) ? response.data : []);
                 this.loading.set(false);
@@ -152,9 +172,9 @@ export class PagosComponent implements OnInit {
 
         this.checkingCounter.set(true);
         this.error.set('');
-        this.api.buscarContadorPorCodigo(code).subscribe({
+        this.contadores.buscarPorCodigo(code).subscribe({
             next: response => {
-                const counter = this.extractCounter(response);
+                const counter = this.contadores.extractId(response);
                 if (counter) {
                     this.form.update(current => ({ ...current, id_contador: counter.id_contador }));
                     this.loadLastPayment(counter.id_contador);
@@ -197,9 +217,9 @@ export class PagosComponent implements OnInit {
 
         this.savingCounter.set(true);
         this.counterError.set('');
-        this.api.createContador(counter).subscribe({
+        this.contadores.createContador(counter as Partial<Contador>).subscribe({
             next: response => {
-                const created = this.extractCounter(response);
+                const created = this.contadores.extractId(response);
                 if (!created) {
                     this.savingCounter.set(false);
                     this.counterError.set('El contador fue creado, pero no se recibió su identificador.');
@@ -233,10 +253,10 @@ export class PagosComponent implements OnInit {
 
         this.saving.set(true);
         this.error.set('');
-        const payload = { ...values, periodo_inicio: period.start, periodo_fin: period.end };
+        const payload = { ...values, periodo_inicio: period.start, periodo_fin: period.end } as Partial<PagoRequest>;
         const request = this.editingId()
-            ? this.api.actualizarPago(this.editingId()!, payload)
-            : this.api.registrarPago(payload);
+            ? this.pagos.actualizarPago(this.editingId()!, payload)
+            : this.pagos.registrarPago(payload);
         request.subscribe({
             next: () => {
                 this.saving.set(false);
@@ -255,8 +275,191 @@ export class PagosComponent implements OnInit {
         this.form.update(current => ({ ...current, [name]: value }));
     }
 
+    // ==========================================
+    // Flujo: pagar año completo / meses pendientes
+    // ==========================================
+    private emptyBulkForm(): BulkForm {
+        return {
+            codigo_contador: '',
+            id_contador: '',
+            ano: new Date().getFullYear(),
+            monto: '',
+            pagado_por: '',
+            identificacion: ''
+        };
+    }
+
+    openBulkForm(): void {
+        this.message.set('');
+        this.error.set('');
+        this.bulkError.set('');
+        this.bulkCounterValidated.set(false);
+        this.bulkMonths.set([]);
+        this.bulkForm.set(this.emptyBulkForm());
+        this.showBulkForm.set(true);
+    }
+
+    closeBulkForm(): void {
+        this.showBulkForm.set(false);
+    }
+
+    updateBulkField<K extends keyof BulkForm>(name: K, value: string): void {
+        const parsed = (name === 'ano' || name === 'monto') ? (value === '' ? '' : Number(value)) : value;
+        this.bulkForm.update(current => ({ ...current, [name]: parsed as BulkForm[K] }));
+    }
+
+    verifyBulkCounter(): void {
+        const code = String(this.bulkForm().codigo_contador ?? '').trim();
+        this.bulkCounterValidated.set(false);
+        this.bulkMonths.set([]);
+        this.bulkForm.update(current => ({ ...current, id_contador: '' }));
+        if (!code) return;
+
+        this.bulkCheckingCounter.set(true);
+        this.bulkError.set('');
+        this.contadores.buscarPorCodigo(code).subscribe({
+            next: response => {
+                const counter = this.contadores.extractId(response);
+                this.bulkCheckingCounter.set(false);
+                if (counter) {
+                    this.bulkForm.update(current => ({ ...current, id_contador: counter.id_contador }));
+                    this.bulkCounterValidated.set(true);
+                    this.loadBulkMonths();
+                    return;
+                }
+                this.bulkError.set('No se encontró un contador con ese código. Créalo primero desde "Nuevo pago".');
+            },
+            error: response => {
+                this.bulkCheckingCounter.set(false);
+                if (response?.status === 404) {
+                    this.bulkError.set('No se encontró un contador con ese código. Créalo primero desde "Nuevo pago".');
+                    return;
+                }
+                this.bulkError.set('No fue posible verificar el código del contador.');
+            }
+        });
+    }
+
+    loadBulkMonths(): void {
+        const idContador = Number(this.bulkForm().id_contador);
+        const year = Number(this.bulkForm().ano);
+        if (!Number.isInteger(idContador) || idContador <= 0 || !Number.isInteger(year) || year < 1) {
+            this.bulkMonths.set([]);
+            return;
+        }
+
+        this.bulkLoadingMonths.set(true);
+        this.pagos.getPagosPorContador(idContador, year).pipe(
+            catchError(() => of({ success: false, data: [] as Record<string, unknown>[] }))
+        ).subscribe(response => {
+            const payments = Array.isArray(response?.data) ? response.data as Record<string, unknown>[] : [];
+            const paidMonths = new Set(
+                payments
+                    .filter(payment => Number(payment['ano_pagado']) === year)
+                    .map(payment => Number(payment['mes_pagado']))
+                    .filter(mes => Number.isInteger(mes) && mes >= 1 && mes <= 12)
+            );
+
+            const months: BulkMonth[] = [];
+            for (let mes = 1; mes <= 12; mes++) {
+                months.push({ mes, nombre: this.monthNames[mes - 1], pagado: paidMonths.has(mes), seleccionado: false });
+            }
+            this.bulkMonths.set(months);
+            this.bulkLoadingMonths.set(false);
+        });
+    }
+
+    onBulkYearChange(value: string): void {
+        this.updateBulkField('ano', value);
+        if (this.bulkCounterValidated()) {
+            this.loadBulkMonths();
+        }
+    }
+
+    toggleBulkMonth(mes: number): void {
+        this.bulkMonths.update(months => months.map(month =>
+            month.mes === mes && !month.pagado ? { ...month, seleccionado: !month.seleccionado } : month
+        ));
+    }
+
+    selectFullYear(): void {
+        this.bulkMonths.update(months => months.map(month =>
+            month.pagado ? month : { ...month, seleccionado: true }
+        ));
+    }
+
+    selectPending(): void {
+        this.selectFullYear();
+    }
+
+    clearBulkSelection(): void {
+        this.bulkMonths.update(months => months.map(month => ({ ...month, seleccionado: false })));
+    }
+
+    bulkSelectedMonths(): BulkMonth[] {
+        return this.bulkMonths().filter(month => month.seleccionado && !month.pagado);
+    }
+
+    bulkPendingCount(): number {
+        return this.bulkMonths().filter(month => !month.pagado).length;
+    }
+
+    saveBulk(): void {
+        const values = this.bulkForm();
+        if (!this.bulkCounterValidated() || !values.id_contador) {
+            this.bulkError.set('Verifica el código del contador.');
+            return;
+        }
+        if (values.monto === '' || Number(values.monto) <= 0) {
+            this.bulkError.set('Ingresa un monto válido por mes.');
+            return;
+        }
+        if (!String(values.pagado_por).trim()) {
+            this.bulkError.set('Indica quién realiza el pago.');
+            return;
+        }
+
+        const months = this.bulkSelectedMonths();
+        if (months.length === 0) {
+            this.bulkError.set('Selecciona al menos un mes a pagar.');
+            return;
+        }
+
+        const year = Number(values.ano);
+        const requests = months.map(month => {
+            const period = this.paymentPeriodDates(month.mes, year);
+            const payload = {
+                id_contador: values.id_contador,
+                codigo_contador: values.codigo_contador,
+                monto: Number(values.monto),
+                mes_pagado: month.mes,
+                ano_pagado: year,
+                pagado_por: values.pagado_por,
+                identificacion: values.identificacion,
+                periodo_inicio: period?.start,
+                periodo_fin: period?.end
+            } as Partial<PagoRequest>;
+            return this.pagos.registrarPago(payload);
+        });
+
+        this.bulkSaving.set(true);
+        this.bulkError.set('');
+        forkJoin(requests).subscribe({
+            next: () => {
+                this.bulkSaving.set(false);
+                this.showBulkForm.set(false);
+                this.message.set(`${months.length} ${months.length === 1 ? 'mes registrado' : 'meses registrados'} correctamente para el año ${year}.`);
+                this.loadRecords();
+            },
+            error: response => {
+                this.bulkSaving.set(false);
+                this.bulkError.set(response?.error?.error || 'No fue posible registrar los pagos.');
+            }
+        });
+    }
+
     private loadLastPayment(idContador: number): void {
-        this.api.getPagosPorContador(idContador).subscribe({
+        this.pagos.getPagosPorContador(idContador).subscribe({
             next: response => {
                 const payments = Array.isArray(response?.data) ? response.data as Record<string, unknown>[] : [];
                 const latest = payments
@@ -321,13 +524,6 @@ export class PagosComponent implements OnInit {
             pagado_por: '',
             identificacion: ''
         });
-    }
-
-    private extractCounter(response: Record<string, unknown>): { id_contador: number } | null {
-        const data = response?.['data'] as Record<string, unknown> | undefined;
-        const source = data ?? response;
-        const id = source?.['id_contador'] ?? source?.['id'];
-        return typeof id === 'number' || typeof id === 'string' ? { id_contador: Number(id) } : null;
     }
 
     private paymentPeriod(payment: Record<string, unknown>): number {

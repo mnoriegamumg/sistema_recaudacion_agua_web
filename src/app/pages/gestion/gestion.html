@@ -11,7 +11,10 @@
             <div><span class="eyebrow">{{ section().icon }} Gestión operativa</span>
                 <h2>{{ section().label }}</h2>
                 <p>{{ section().description }}</p>
-            </div><button class="primary" type="button" (click)="openForm()">＋ Nuevo registro</button>
+            </div>
+            <div class="heading-actions">
+                <button class="primary" type="button" (click)="openForm()">＋ Nuevo registro</button>
+            </div>
         </section>
         @if (message()) { <div class="notice success" role="status">{{ message() }}</div> }
         @if (error()) { <div class="notice error" role="alert">{{ error() }}</div> }
@@ -32,10 +35,13 @@
             @else { <div class="table-scroll">
                 <table>
                     <thead>
-                        <tr>@for (field of section().fields; track field.name) { <th>{{ field.label }}</th> }</tr>
+                        <tr>@for (field of tableColumns(); track field.name) { <th>{{ field.label }}</th> }
+                            @if (canEdit()) { <th>Acciones</th> }</tr>
                     </thead>
-                    <tbody>@for (record of records(); track $index) { <tr>@for (field of section().fields; track
-                            field.name) { <td>{{ display(record, field) }}</td> }</tr> }</tbody>
+                    <tbody>@for (record of records(); track $index) { <tr>@for (field of tableColumns(); track
+                            field.name) { <td>{{ display(record, field) }}</td> }
+                            @if (canEdit()) { <td><button class="link-button" type="button"
+                                (click)="openEditForm(record)">Editar</button></td> }</tr> }</tbody>
                 </table>
             </div> }
         </section>
@@ -47,7 +53,7 @@
     <section class="modal" role="dialog" aria-modal="true" [attr.aria-label]="'Nuevo registro de ' + section().label"
         (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <div><span class="eyebrow">Nuevo registro</span>
+            <div><span class="eyebrow">{{ editingId() !== null ? 'Editar registro' : 'Nuevo registro' }}</span>
                 <h2>{{ section().label }}</h2>
             </div><button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button>
         </div>
@@ -71,7 +77,7 @@
             <div class="actions"><button class="cancel" type="button" (click)="closeForm()">Cancelar</button><button
                     class="primary" type="submit"
                     [disabled]="saving() || (section().key === 'clientes' && (checkingCounter() || !counterValidated()))">{{
-                    saving() ? 'Guardando...' : 'Guardar registro' }}</button></div>
+                    saving() ? 'Guardando...' : (editingId() !== null ? 'Guardar cambios' : 'Guardar registro') }}</button></div>
         </form>
     </section>
 </div>

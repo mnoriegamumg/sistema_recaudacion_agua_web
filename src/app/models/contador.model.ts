@@ -4,6 +4,7 @@ export interface Contador {
     dpi?: string;
     nit?: string;
     nombre_propietario: string;
+    comunidad?: string;
     estado: 'activo' | 'inactivo' | 'suspendido';
     created_at?: string;
     updated_at?: string;

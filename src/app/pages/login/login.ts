@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-login',
@@ -12,8 +13,8 @@ import { AuthService } from '../../services/auth.service';
     styleUrls: ['./login.css']
 })
 export class LoginComponent {
-    email: string = 'admin@municipalidad.com';
-    password: string = 'password';
+    email: string = environment.production ? '' : 'admin@municipalidad.com';
+    password: string = environment.production ? '' : 'password';
     isLoading: boolean = false;
     error: string = '';
 

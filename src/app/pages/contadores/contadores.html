@@ -1,0 +1,135 @@
+<div class="layout">
+    <app-sidebar />
+
+    <main class="main-content">
+        <header class="topbar">
+            <div><span class="eyebrow">Administración</span>
+                <h1>Centro de registros</h1>
+            </div><button class="mobile-logout" type="button" (click)="logout()" aria-label="Cerrar sesión">↪</button>
+        </header>
+        <section class="heading">
+            <div><span class="eyebrow">⌁ Gestión operativa</span>
+                <h2>Contadores</h2>
+                <p>Administra medidores y propietarios.</p>
+            </div>
+            <div class="heading-actions">
+                <button class="primary" type="button" (click)="openForm()">＋ Nuevo contador</button>
+            </div>
+        </section>
+        @if (message()) { <div class="notice success" role="status">{{ message() }}</div> }
+        @if (error()) { <div class="notice error" role="alert">{{ error() }}</div> }
+        <section class="records-card">
+            <div class="card-header">
+                <div><span class="eyebrow">Registros actuales</span><strong>{{ records().length }} resultados</strong>
+                </div><button class="refresh" type="button" (click)="loadRecords()" [disabled]="loading()">↻
+                    Actualizar</button>
+            </div>
+            @if (loading()) { <div class="state"><span class="spinner"></span>
+                <p>Cargando registros...</p>
+            </div> }
+            @else if (records().length === 0) { <div class="state"><span class="empty-icon">◌</span><strong>Aún no hay
+                    contadores</strong>
+                <p>Agrega el primer contador.</p><button class="link-button" type="button" (click)="openForm()">＋
+                    Agregar ahora</button>
+            </div> }
+            @else { <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>@for (field of fields; track field.name) { <th>{{ field.label }}</th> }<th>Acciones</th></tr>
+                    </thead>
+                    <tbody>@for (record of records(); track $index) { <tr>@for (field of fields; track field.name) {
+                            <td>{{ display(record, field) }}</td> }
+                            <td class="row-actions"><button class="link-button" type="button"
+                                    (click)="openEditForm(record)">Editar</button><button class="link-button"
+                                    type="button" (click)="openStatement(record)">Estado de cuenta</button></td></tr> }
+                    </tbody>
+                </table>
+            </div> }
+        </section>
+    </main>
+</div>
+
+@if (showForm()) {
+<div class="backdrop" role="presentation" (click)="closeForm()">
+    <section class="modal" role="dialog" aria-modal="true" aria-label="Registro de contador"
+        (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div><span class="eyebrow">{{ editingId() !== null ? 'Editar registro' : 'Nuevo registro' }}</span>
+                <h2>Contador</h2>
+            </div><button class="close" type="button" (click)="closeForm()" aria-label="Cerrar">×</button>
+        </div>
+        <form (ngSubmit)="save()">
+            <div class="form-grid">@for (field of fields; track field.name) { <label class="field"><span>{{ field.label
+                        }} @if (field.required) { <em>*</em> }</span>
+                    @if (field.name === 'comunidad') { <select [value]="form()[field.name]"
+                        (change)="updateField(field.name, $any($event.target).value)" [required]="field.required">
+                        <option value="" disabled>Selecciona una comunidad</option>@for (option of comunidades(); track
+                        option) { <option [value]="option">{{ option }}</option> }
+                    </select> }
+                    @else if (field.options) { <select [value]="form()[field.name]"
+                        (change)="updateField(field.name, $any($event.target).value)" [required]="field.required">
+                        <option value="" disabled>Selecciona una opción</option>@for (option of field.options; track
+                        option) { <option [value]="option">{{ option | titlecase }}</option> }
+                    </select> }
+                    @else { <input [type]="field.type || 'text'" [value]="form()[field.name]"
+                        (input)="updateField(field.name, $any($event.target).value)" [required]="field.required"
+                        [placeholder]="field.label"> }
+                </label> }</div>
+            <div class="actions"><button class="cancel" type="button" (click)="closeForm()">Cancelar</button><button
+                    class="primary" type="submit" [disabled]="saving()">{{ saving() ? 'Guardando...' : (editingId() !==
+                    null ? 'Guardar cambios' : 'Guardar registro') }}</button></div>
+        </form>
+    </section>
+</div>
+}
+
+@if (showStatement()) {
+<div class="backdrop receipt-backdrop" role="presentation" (click)="closeStatement()">
+    <section class="receipt-dialog" role="dialog" aria-modal="true" aria-label="Estado de cuenta"
+        (click)="$event.stopPropagation()">
+        <div class="receipt-header">
+            <div><span class="eyebrow">Estado de cuenta</span>
+                <h2>Estado de cuenta</h2>
+            </div><button class="close" type="button" (click)="closeStatement()" aria-label="Cerrar">×</button>
+        </div>
+
+        @if (loadingStatement()) { <div class="state"><span class="spinner"></span>
+            <p>Cargando estado de cuenta...</p>
+        </div> }
+        @else if (statementError()) { <div class="notice error" role="alert">{{ statementError() }}</div> }
+        @else {
+        <article class="receipt-paper" id="statement-paper">
+            <div class="receipt-brand"><strong>Sistema de Recaudación de Agua</strong><span>Estado de cuenta ·
+                    {{ statementYear() }}</span></div>
+            <div class="receipt-details">
+                <div><span>Propietario</span><strong>{{ statementValue('nombre_propietario') }}</strong></div>
+                <div><span>Contador</span><strong>{{ statementValue('codigo_contador') }}</strong></div>
+            </div>
+            <div class="statement-summary">
+                <div class="summary-chip paid"><span>Meses pagados</span><strong>{{ paidMonths().length }}</strong></div>
+                <div class="summary-chip due"><span>Meses adeudados</span><strong>{{ unpaidMonths().length
+                        }}</strong></div>
+            </div>
+            <div class="statement-section">
+                <span class="statement-title">Meses pagados</span>
+                @if (paidMonths().length === 0) { <p class="statement-empty">Sin meses pagados en {{ statementYear()
+                    }}.</p> }
+                @else { <ul class="statement-list">@for (month of paidMonths(); track month.mes) { <li
+                        class="status-paid"><span>✓</span> {{ month.nombre }}@if (month.fechaPago) { <em
+                            class="pay-date">{{ month.fechaPago }}</em> }</li> }</ul> }
+            </div>
+            <div class="statement-section">
+                <span class="statement-title">Meses adeudados</span>
+                @if (unpaidMonths().length === 0) { <p class="statement-empty">Al día en {{ statementYear() }}.</p> }
+                @else { <ul class="statement-list">@for (month of unpaidMonths(); track month.mes) { <li
+                        class="status-due"><span>•</span> {{ month.nombre }}</li> }</ul> }
+            </div>
+            <p class="receipt-note">Documento informativo. No constituye comprobante de pago.</p>
+        </article>
+        <div class="actions receipt-actions"><button class="cancel" type="button"
+                (click)="closeStatement()">Cerrar</button>
+            <button class="primary" type="button" (click)="printStatement()">Imprimir estado de cuenta</button></div>
+        }
+    </section>
+</div>
+}

@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { ApiService } from '../../services/api.service';
+import { ContadorService } from '../../services/contador.service';
+import { MorosidadService } from '../../services/morosidad.service';
 import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
@@ -26,7 +27,8 @@ export class DashboardComponent implements OnInit {
 
     constructor(
         private authService: AuthService,
-        private apiService: ApiService,
+        private contadorService: ContadorService,
+        private morosidadService: MorosidadService,
         private router: Router
     ) {}
 
@@ -39,9 +41,9 @@ export class DashboardComponent implements OnInit {
         this.loading = true;
 
         forkJoin({
-            contadores: this.apiService.getContadores(),
-            morosidad: this.apiService.getResumenMorosidad(),
-            morosos: this.apiService.getMorosos()
+            contadores: this.contadorService.getContadores(),
+            morosidad: this.morosidadService.getResumen(),
+            morosos: this.morosidadService.getMorosos()
         }).subscribe({
             next: ({ contadores, morosidad, morosos }) => {
                 const contadoresData = Array.isArray(contadores?.data) ? contadores.data : [];
@@ -55,6 +57,7 @@ export class DashboardComponent implements OnInit {
                 this.porcentajeMorosidad = this.totalContadores > 0
                     ? (this.totalMorosos / this.totalContadores) * 100
                     : 0;
+                this.loading = false;
             },
             error: () => {
                 this.totalContadores = 0;
@@ -62,12 +65,9 @@ export class DashboardComponent implements OnInit {
                 this.totalAdeudado = 0;
                 this.porcentajeMorosidad = 0;
                 this.morosos = [];
+                this.loading = false;
             }
         });
-
-        setTimeout(() => {
-            this.loading = false;
-        }, 500);
     }
 
     logout(): void {

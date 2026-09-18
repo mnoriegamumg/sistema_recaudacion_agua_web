@@ -11,7 +11,12 @@
             <div><span class="eyebrow">＋ Gestión operativa</span>
                 <h2>Pagos</h2>
                 <p>Registra pagos y consulta recibos.</p>
-            </div><button class="primary" type="button" (click)="openForm()">＋ Nuevo pago</button>
+            </div>
+            <div class="heading-actions">
+                <button class="secondary" type="button" (click)="openBulkForm()">🗓 Pagar año / meses
+                    pendientes</button>
+                <button class="primary" type="button" (click)="openForm()">＋ Nuevo pago</button>
+            </div>
         </section>
         @if (message()) { <div class="notice success" role="status">{{ message() }}</div> }
         @if (error()) { <div class="notice error" role="alert">{{ error() }}</div> }
@@ -120,6 +125,79 @@
                     (click)="closeCounterForm()">Cancelar</button><button class="primary" type="submit"
                     [disabled]="savingCounter()">{{ savingCounter() ? 'Guardando...' : 'Crear contador' }}</button>
             </div>
+        </form>
+    </section>
+</div>
+}
+
+@if (showBulkForm()) {
+<div class="backdrop" role="presentation" (click)="closeBulkForm()">
+    <section class="modal" role="dialog" aria-modal="true" aria-label="Pagar año o meses pendientes"
+        (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div><span class="eyebrow">Pago por periodo</span>
+                <h2>Pagar año / meses pendientes</h2>
+            </div><button class="close" type="button" (click)="closeBulkForm()" aria-label="Cerrar">×</button>
+        </div>
+        <p class="modal-description">Registra de una sola vez el año completo o los meses pendientes de un contador.
+            Puedes pagar años anteriores.</p>
+        @if (bulkError()) { <div class="notice error" role="alert">{{ bulkError() }}</div> }
+
+        <form (ngSubmit)="saveBulk()">
+            <div class="form-grid">
+                <label class="field"><span>Código de contador <em>*</em></span>
+                    <input type="text" [value]="bulkForm().codigo_contador"
+                        (input)="updateBulkField('codigo_contador', $any($event.target).value)"
+                        (blur)="verifyBulkCounter()" required>
+                    @if (bulkCheckingCounter()) { <small>Verificando código...</small> }
+                    @if (bulkCounterValidated()) { <small class="field-success">Contador encontrado.</small> }
+                </label>
+                <label class="field"><span>Año a pagar <em>*</em></span>
+                    <input type="number" [value]="bulkForm().ano"
+                        (input)="onBulkYearChange($any($event.target).value)" required>
+                </label>
+                <label class="field"><span>Monto por mes <em>*</em></span>
+                    <input type="number" [value]="bulkForm().monto"
+                        (input)="updateBulkField('monto', $any($event.target).value)" required>
+                </label>
+                <label class="field"><span>Pagado por <em>*</em></span>
+                    <input type="text" [value]="bulkForm().pagado_por"
+                        (input)="updateBulkField('pagado_por', $any($event.target).value)" required>
+                </label>
+                <label class="field"><span>Identificación</span>
+                    <input type="text" [value]="bulkForm().identificacion"
+                        (input)="updateBulkField('identificacion', $any($event.target).value)">
+                </label>
+            </div>
+
+            @if (bulkCounterValidated()) {
+            <div class="months-block">
+                <div class="months-header">
+                    <span class="eyebrow">Meses del año {{ bulkForm().ano }} · {{ bulkPendingCount() }} pendiente(s)</span>
+                    <div class="months-actions">
+                        <button type="button" class="link-button" (click)="selectFullYear()"
+                            [disabled]="bulkLoadingMonths()">Año completo</button>
+                        <button type="button" class="link-button" (click)="clearBulkSelection()"
+                            [disabled]="bulkLoadingMonths()">Limpiar</button>
+                    </div>
+                </div>
+                @if (bulkLoadingMonths()) { <p class="months-hint">Cargando meses...</p> }
+                @else {
+                <div class="months-grid">@for (month of bulkMonths(); track month.mes) { <button type="button"
+                        class="month-chip" [class.paid]="month.pagado" [class.selected]="month.seleccionado"
+                        [disabled]="month.pagado" (click)="toggleBulkMonth(month.mes)">
+                        <span class="month-name">{{ month.nombre }}</span>
+                        <span class="month-state">{{ month.pagado ? 'Pagado' : (month.seleccionado ? '✓ A pagar' : 'Pendiente') }}</span>
+                    </button> }</div>
+                <p class="months-hint">{{ bulkSelectedMonths().length }} mes(es) seleccionado(s).</p>
+                }
+            </div>
+            }
+
+            <div class="actions"><button class="cancel" type="button" (click)="closeBulkForm()">Cancelar</button><button
+                    class="primary" type="submit"
+                    [disabled]="bulkSaving() || bulkCheckingCounter() || !bulkCounterValidated() || bulkSelectedMonths().length === 0">{{
+                    bulkSaving() ? 'Registrando...' : 'Registrar pagos' }}</button></div>
         </form>
     </section>
 </div>

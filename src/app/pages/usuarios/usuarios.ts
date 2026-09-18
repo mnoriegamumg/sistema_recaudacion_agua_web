@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { UsuarioService } from '../../services/usuario.service';
 import { AuthService } from '../../services/auth.service';
 import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
@@ -33,7 +33,7 @@ type UsuarioForm = {
 export class UsuariosComponent implements OnInit {
     readonly auth = inject(AuthService);
     private readonly router = inject(Router);
-    private readonly api = inject(ApiService);
+    private readonly api = inject(UsuarioService);
 
     readonly roles = ['admin', 'tesorero', 'cajero'];
     readonly records = signal<UsuarioRecord[]>([]);

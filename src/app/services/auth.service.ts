@@ -8,6 +8,7 @@ import { LoginRequest, LoginResponse, Usuario } from '../models/auth.model';
 export class AuthService {
     private readonly TOKEN_KEY = 'token';
     private readonly USER_KEY = 'usuario';
+    private readonly EXPIRES_KEY = 'token_expires_at';
 
     constructor(private http: HttpClient) {}
 
@@ -24,14 +25,19 @@ export class AuthService {
         );
     }
 
-    private setSession(data: any): void {
+    private setSession(data: LoginResponse['data']): void {
         localStorage.setItem(this.TOKEN_KEY, data.token);
         localStorage.setItem(this.USER_KEY, JSON.stringify(data.usuario));
+        if (data.expires_in) {
+            const expiresAt = Date.now() + data.expires_in * 1000;
+            localStorage.setItem(this.EXPIRES_KEY, String(expiresAt));
+        }
     }
 
     logout(): void {
         localStorage.removeItem(this.TOKEN_KEY);
         localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.EXPIRES_KEY);
     }
 
     getToken(): string | null {
@@ -43,8 +49,16 @@ export class AuthService {
         return user ? JSON.parse(user) : null;
     }
 
+    isTokenExpired(): boolean {
+        const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+        if (!expiresAt) {
+            return false;
+        }
+        return Date.now() >= Number(expiresAt);
+    }
+
     isAuthenticated(): boolean {
-        return !!this.getToken();
+        return !!this.getToken() && !this.isTokenExpired();
     }
 
     getMe(): Observable<any> {
