@@ -1,0 +1,1186 @@
+/* ========================================================
+   PORTAL PÚBLICO CIUDADANO - SISTEMA DE AGUA POTABLE
+   ======================================================== */
+
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #f3f6f9;
+    color: #1e293b;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+}
+
+.public-portal {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------
+   Header Público (Limpio, Sin Menús)
+   -------------------------------------------------------- */
+.public-header {
+    background: linear-gradient(135deg, #0e2f44 0%, #1a5276 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(14, 47, 68, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.brand-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-badge {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    backdrop-filter: blur(8px);
+}
+
+.brand-title {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+    display: block;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.header-badge .secure-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------
+   Main Container
+   -------------------------------------------------------- */
+.public-main {
+    flex: 1;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------
+   Sección de Búsqueda
+   -------------------------------------------------------- */
+.search-section {
+    margin-bottom: 24px;
+}
+
+.search-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.search-card h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.search-subtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    line-height: 1.5;
+}
+
+.search-form {
+    display: flex;
+    max-width: 540px;
+    margin: 0 auto;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.input-wrapper {
+    flex: 1;
+    min-width: 240px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #0284c7;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+}
+
+.input-wrapper.is-locked input,
+.input-wrapper input:read-only,
+.input-wrapper input.locked {
+    background: #f1f5f9;
+    color: #334155;
+    border-color: #cbd5e1;
+    cursor: not-allowed;
+    user-select: none;
+    padding-right: 95px;
+}
+
+.input-wrapper.is-locked input:focus,
+.input-wrapper input:read-only:focus,
+.input-wrapper input.locked:focus {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+    box-shadow: none;
+}
+
+.locked-badge {
+    position: absolute;
+    right: 12px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-consultar {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 130px;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.btn-consultar:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+}
+
+.btn-consultar:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+/* --------------------------------------------------------
+   Widget reCAPTCHA v2 (Estilo Oficial "No soy un robot")
+   -------------------------------------------------------- */
+.recaptcha-box {
+    width: 100%;
+    max-width: 304px;
+    margin: 8px auto;
+    background: #f9f9f9;
+    border: 1px solid #d3d3d3;
+    border-radius: 4px;
+    box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.recaptcha-box:hover {
+    border-color: #b0b0b0;
+    box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.12);
+}
+
+.recaptcha-box.has-error {
+    border-color: #ef4444;
+    background: #fff5f5;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.recaptcha-box.verified {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.recaptcha-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.recaptcha-checkbox {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #c1c1c1;
+    border-radius: 3px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.recaptcha-checkbox.checking {
+    border-color: #0284c7;
+}
+
+.recaptcha-checkbox.checked {
+    border-color: #16a34a;
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.recaptcha-checkmark {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.recaptcha-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #0284c7;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.recaptcha-text {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #222222;
+}
+
+.recaptcha-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-left: 10px;
+}
+
+.recaptcha-title {
+    font-size: 0.62rem;
+    color: #555555;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.recaptcha-links {
+    font-size: 0.52rem;
+    color: #777777;
+}
+
+/* Alerta de Captcha y Barra de Progreso por Pasos */
+.captcha-alert {
+    margin-top: 10px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.step-progress-banner {
+    margin-top: 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.spinner-small {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #bfdbfe;
+    border-top-color: #1d4ed8;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+/* Visualización del Token de 15 caracteres generado */
+.token-display {
+    width: 100%;
+    max-width: 320px;
+    margin: 4px auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #475569;
+}
+
+.token-chip {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+/* Botones de Impresión */
+.btn-print-mini {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-print-mini:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.print-action-card {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.print-action-text strong {
+    display: block;
+    font-size: 0.98rem;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+
+.print-action-text p {
+    font-size: 0.86rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.btn-print-large {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+.btn-print-large:hover {
+    background: #0284c7;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+}
+
+.error-banner {
+    margin-top: 18px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: left;
+}
+
+/* --------------------------------------------------------
+   Guía de Ayuda (Bienvenida)
+   -------------------------------------------------------- */
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.guide-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.guide-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.guide-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.guide-card p {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* --------------------------------------------------------
+   Barra de Acciones / Compartir (WhatsApp & Enlace)
+   -------------------------------------------------------- */
+.action-bar {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.action-bar-left .status-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-whatsapp {
+    background-color: #25d366;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-whatsapp:hover {
+    background-color: #20ba59;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(37, 211, 102, 0.4);
+}
+
+.whatsapp-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-copy, .btn-print {
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 9px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-copy:hover, .btn-print:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+/* --------------------------------------------------------
+   Banners de Estado (Solvente vs Moroso)
+   -------------------------------------------------------- */
+.status-banner {
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.status-banner.moroso {
+    background: linear-gradient(135deg, #fff1f2 0%, #fee2e2 100%);
+    border: 2px solid #f87171;
+    color: #991b1b;
+}
+
+.status-banner.solvente {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #4ade80;
+    color: #166534;
+}
+
+.status-banner .status-icon {
+    font-size: 36px;
+    line-height: 1;
+}
+
+.status-info h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.status-info p {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
+}
+
+.debt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #dc2626;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.debt-chip strong {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.solvent-chip {
+    display: inline-flex;
+    align-items: center;
+    background: #16a34a;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------
+   Tarjetas de Detalle
+   -------------------------------------------------------- */
+.detail-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    margin-bottom: 18px;
+}
+
+.card-header.flex-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.card-header .eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #0284c7;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.card-header h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.info-item {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.info-item.highlight {
+    background: #f0f9ff;
+    border-color: #bae6fd;
+}
+
+.info-label {
+    display: block;
+    font-size: 0.78rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.info-value.code {
+    font-family: monospace;
+    color: #0284c7;
+    font-size: 1.25rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.badge-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* --------------------------------------------------------
+   Selector de Año y Cuadrícula de 12 Meses
+   -------------------------------------------------------- */
+.year-selector {
+    display: flex;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.year-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.year-btn.active {
+    background: #ffffff;
+    color: #0284c7;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.months-summary-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 14px;
+}
+
+.stat-badge.paid {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.stat-badge.paid .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.stat-badge.pending {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.stat-badge.pending .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+}
+
+.months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    gap: 12px;
+}
+
+.month-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.month-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.month-card.paid {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.month-card.unpaid {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+.month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.month-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.month-indicator {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.month-card.paid .month-indicator {
+    color: #16a34a;
+}
+
+.month-card.unpaid .month-indicator {
+    color: #dc2626;
+}
+
+.tag-status {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+}
+
+.tag-paid {
+    color: #15803d;
+}
+
+.tag-unpaid {
+    color: #b91c1c;
+}
+
+.tag-future {
+    color: #94a3b8;
+}
+
+.month-date {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.month-date.alert {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.month-recibo {
+    display: block;
+    font-size: 0.72rem;
+    color: #0284c7;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* --------------------------------------------------------
+   Tabla de Recibos Recientes
+   -------------------------------------------------------- */
+.table-container {
+    overflow-x: auto;
+}
+
+.public-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.public-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 12px 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.public-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.public-table tr:hover td {
+    background: #f8fafc;
+}
+
+.public-table td.amount {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* --------------------------------------------------------
+   Banner de Instrucciones
+   -------------------------------------------------------- */
+.info-banner {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.info-banner-icon {
+    font-size: 24px;
+}
+
+.info-banner-content h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 4px;
+}
+
+.info-banner-content p {
+    font-size: 0.88rem;
+    color: #334155;
+    line-height: 1.45;
+}
+
+/* --------------------------------------------------------
+   Loading State Card
+   -------------------------------------------------------- */
+.state-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.spinner {
+    width: 38px;
+    height: 38px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #0284c7;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------
+   Footer Público
+   -------------------------------------------------------- */
+.public-footer {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 24px 16px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.footer-inner p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.footer-links {
+    margin-top: 12px;
+}
+
+.admin-login-link {
+    color: #0284c7;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-login-link:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------
+   Formato para Impresión Oficial
+   -------------------------------------------------------- */
+.print-only {
+    display: none;
+}
+
+@media print {
+    .no-print, .public-header, .search-section, .public-footer {
+        display: none !important;
+    }
+
+    body, :host {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    .public-main {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .detail-card, .status-banner {
+        box-shadow: none !important;
+        border: 1px solid #000000 !important;
+        break-inside: avoid;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    .print-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #ccc;
+    }
+
+    .print-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        padding: 0 40px;
+    }
+
+    .print-stamp {
+        border: 2px dashed #999;
+        width: 140px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .print-signature {
+        text-align: center;
+        width: 200px;
+    }
+
+    .print-signature .line {
+        border-bottom: 1px solid #000;
+        margin-bottom: 6px;
+        height: 60px;
+    }
+
+    .print-disclaimer {
+        font-size: 0.75rem;
+        color: #666;
+        text-align: center;
+        margin-top: 30px;
+    }
+}
+
+/* --------------------------------------------------------
+   Responsive Adaptativo para Teléfonos Móviles (WhatsApp)
+   -------------------------------------------------------- */
+@media (max-width: 640px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .search-card {
+        padding: 20px 16px;
+    }
+
+    .search-card h1 {
+        font-size: 1.35rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .btn-consultar {
+        width: 100%;
+    }
+
+    .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-whatsapp, .btn-copy, .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .months-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

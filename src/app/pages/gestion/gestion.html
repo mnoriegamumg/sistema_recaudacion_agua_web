@@ -40,8 +40,8 @@
                     </thead>
                     <tbody>@for (record of records(); track $index) { <tr>@for (field of tableColumns(); track
                             field.name) { <td>{{ display(record, field) }}</td> }
-                            @if (canEdit()) { <td><button class="link-button" type="button"
-                                (click)="openEditForm(record)">Editar</button></td> }</tr> }</tbody>
+                            @if (canEdit()) { <td class="row-actions"><button class="btn-action btn-action-edit" type="button"
+                                (click)="openEditForm(record)">✏️ Editar</button></td> }</tr> }</tbody>
                 </table>
             </div> }
         </section>

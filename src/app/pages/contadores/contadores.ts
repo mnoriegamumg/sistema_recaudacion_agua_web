@@ -232,6 +232,16 @@ export class ContadoresComponent implements OnInit {
         return this.monthsStatus().filter(month => !month.pagado);
     }
 
+    shareWhatsApp(record: Record<string, unknown>): void {
+        const id = record['id_contador'] ?? record['id'] ?? '';
+        const codigo = String(record['codigo_contador'] ?? record['codigo'] ?? id);
+        const nombre = String(record['nombre_propietario'] ?? 'Vecino(a)');
+        const currentYear = new Date().getFullYear();
+        const url = `${window.location.origin}/consulta?id=${encodeURIComponent(String(id || codigo))}&ano=${currentYear}`;
+        const text = `Estimado(a) ${nombre}, le compartimos el enlace para consultar su estado de cuenta del servicio de agua potable:\n\n💧 *Contador:* ${codigo}\n📅 *Año:* ${currentYear}\n🔗 *Consultar:* ${url}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
     private resetForm(): void {
         const values: Record<string, unknown> = {};
         this.fields.forEach(field => values[field.name] = field.options?.[0] ?? '');

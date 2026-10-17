@@ -349,13 +349,104 @@ tr:last-child td {
     font-size: 12px
 }
 
-.link-button {
-    border: 0;
-    background: transparent;
-    color: var(--color-primary);
+/* ========================================================
+   Botones de Acción y Enlaces Convertidos a Botón
+   ======================================================== */
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.link-button,
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
     font-size: 12px;
-    font-weight: 700;
-    cursor: pointer
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: var(--color-primary-dark);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.link-button:hover,
+.btn-action:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.link-button:active,
+.btn-action:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Variante: Editar (Azul suave) */
+.btn-action-edit {
+    background: #f0f7ff;
+    border-color: #bae6fd;
+    color: #0284c7;
+}
+
+.btn-action-edit:hover {
+    background: #e0f2fe;
+    border-color: #38bdf8;
+    color: #0369a1;
+}
+
+/* Variante: Estado de cuenta (Azul oscuro / tema primario) */
+.btn-action-statement {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.btn-action-statement:hover {
+    background: #dbeafe;
+    border-color: #60a5fa;
+    color: #1e40af;
+}
+
+/* Variante: WhatsApp (Verde oficial) */
+.btn-action-whatsapp {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #15803d;
+}
+
+.btn-action-whatsapp:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.15);
+}
+
+/* Variante: Imprimir */
+.btn-action-print {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+.btn-action-print:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #1e293b;
 }
 
 .backdrop {

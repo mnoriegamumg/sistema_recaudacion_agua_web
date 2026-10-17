@@ -209,6 +209,22 @@ export class MorosidadComponent implements OnInit {
         return this.monthsStatus().filter(month => !month.pagado);
     }
 
+    shareWhatsApp(record: Record<string, unknown>): void {
+        const id = record['id_contador'] ?? record['id'] ?? '';
+        const codigo = String(record['codigo_contador'] ?? record['codigo'] ?? id);
+        const nombre = String(record['nombre_propietario'] ?? 'Vecino(a)');
+        const deuda = record['total_adeudado'] ?? record['saldo_adeudado'];
+        const meses = record['meses_adeudados'];
+        const currentYear = new Date().getFullYear();
+        const url = `${window.location.origin}/consulta?id=${encodeURIComponent(String(id || codigo))}&ano=${currentYear}`;
+        const text = `Estimado(a) ${nombre}, le saludamos de la Municipalidad de Santa Bárbara. Le compartimos el estado de cuenta de su servicio de agua potable (Contador ${codigo}):\n\n` +
+            (meses ? `⚠️ *Meses pendientes:* ${meses}\n` : '') +
+            (deuda ? `💰 *Saldo estimado:* Q${deuda}\n` : '') +
+            `📅 *Año:* ${currentYear}\n` +
+            `🔗 *Ver detalle completo aquí:* ${url}\n\nLe invitamos a acercarse a Tesorería Municipal para regularizar su servicio.`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
     private resetForm(): void {
         const now = new Date();
         this.form.set({ mes: now.getMonth() + 1, ano: now.getFullYear() });

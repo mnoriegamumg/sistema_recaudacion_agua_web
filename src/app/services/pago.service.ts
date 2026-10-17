@@ -26,11 +26,11 @@ export class PagoService {
         return this.http.put<ApiResponse<any>>(`${this.baseUrl}/${id}`, data);
     }
 
-    getPagosPorContador(idContador: number, ano?: number): Observable<ApiResponse<any[]>> {
+    getPagosPorContador(idContador: number | string, ano?: number): Observable<ApiResponse<any>> {
         const url = ano
             ? `${this.baseUrl}/contador/${idContador}?ano=${ano}`
             : `${this.baseUrl}/contador/${idContador}`;
-        return this.http.get<ApiResponse<any[]>>(url);
+        return this.http.get<ApiResponse<any>>(url);
     }
 
     getPagoPorRecibo(recibo: string): Observable<ApiResponse<any>> {

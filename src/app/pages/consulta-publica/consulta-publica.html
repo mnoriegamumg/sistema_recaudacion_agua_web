@@ -1,0 +1,409 @@
+<div class="public-portal">
+    <!-- Header Oficial sin Menús -->
+    <header class="public-header">
+        <div class="header-content">
+            <div class="brand-group">
+                <div class="brand-badge">💧</div>
+                <div>
+                    <span class="brand-title">Agua Clara</span>
+                    <span class="brand-subtitle">Municipalidad de Santa Bárbara · Portal Ciudadano</span>
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="secure-tag">🔒 Consulta Pública Segura</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="public-main">
+        <!-- Hero & Buscador -->
+        <section class="search-section">
+            <div class="search-card">
+                <h1>Consulta de Estado de Cuenta</h1>
+                <p class="search-subtitle">
+                    Ingresa el código de tu contador para verificar tus meses pagados, saldos pendientes o constancia de solvencia.
+                </p>
+
+                <form (ngSubmit)="onFormSubmit()" class="search-form">
+                    <div class="input-wrapper" [class.is-locked]="isCodigoLocked()">
+                        <span class="input-icon" [title]="isCodigoLocked() ? 'Código fijado por el enlace' : 'Buscar código'">
+                            {{ isCodigoLocked() ? '🔒' : '🔍' }}
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Ej. M003 o M001..."
+                            [ngModel]="codigoInput()"
+                            (ngModelChange)="codigoInput.set($event)"
+                            name="codigoContador"
+                            autocomplete="off"
+                            required
+                            [readonly]="isCodigoLocked()"
+                            [class.locked]="isCodigoLocked()"
+                            [attr.title]="isCodigoLocked() ? 'Este código viene fijado desde el enlace de consulta' : 'Ingresa el código del contador'"
+                        />
+                        @if (isCodigoLocked()) {
+                            <span class="locked-badge" title="Este código viene predefinido en el enlace">
+                                🔒 Enlace
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Widget reCAPTCHA -->
+                    <div class="recaptcha-box" [class.verified]="captchaVerified()" [class.has-error]="captchaError()">
+                        <div class="recaptcha-inner" (click)="toggleCaptcha()" role="button" tabindex="0">
+                            <div class="recaptcha-checkbox" [class.checking]="captchaChecking()" [class.checked]="captchaVerified()">
+                                @if (captchaChecking()) {
+                                    <span class="recaptcha-spinner"></span>
+                                } @else if (captchaVerified()) {
+                                    <span class="recaptcha-checkmark">✔</span>
+                                }
+                            </div>
+                            <span class="recaptcha-text">No soy un robot</span>
+                        </div>
+                        <div class="recaptcha-branding">
+                            <svg class="recaptcha-logo" viewBox="0 0 24 24" width="28" height="28">
+                                <path fill="#1c3aa9" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+                            </svg>
+                            <span class="recaptcha-title">reCAPTCHA</span>
+                            <span class="recaptcha-links">Privacidad · Términos</span>
+                        </div>
+                    </div>
+
+                    @if (captchaVerified() && recaptchaToken()) {
+                        <div class="token-display">
+                            <span class="token-label">Token de seguridad (15 caracteres):</span>
+                            <code class="token-chip">{{ recaptchaToken() }}</code>
+                        </div>
+                    }
+
+                    <button type="submit" class="btn-consultar" [disabled]="loading()">
+                        @if (loading()) {
+                            <span class="btn-spinner"></span>
+                            <span>Consultando...</span>
+                        } @else {
+                            <span>Consultar Estado</span>
+                        }
+                    </button>
+                </form>
+
+                @if (captchaError()) {
+                    <div class="captcha-alert" role="alert">
+                        <span>⚠️ {{ captchaError() }}</span>
+                    </div>
+                }
+
+                @if (loading() && stepMessage()) {
+                    <div class="step-progress-banner">
+                        <span class="spinner-small"></span>
+                        <span>{{ stepMessage() }}</span>
+                    </div>
+                }
+
+                @if (error()) {
+                    <div class="error-banner" role="alert">
+                        <span class="alert-icon">⚠️</span>
+                        <span>{{ error() }}</span>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- Spinner global si está cargando detalles -->
+        @if (loading() && !contador()) {
+            <div class="state-card loading-state">
+                <div class="spinner"></div>
+                <p>Verificando registro del medidor...</p>
+            </div>
+        }
+
+        <!-- Estado de Bienvenida / Guía si no ha buscado aún -->
+        @if (!searched() && !loading()) {
+            <section class="help-section">
+                <div class="guide-grid">
+                    <div class="guide-card">
+                        <div class="guide-icon">🧾</div>
+                        <h3>¿Dónde encuentro mi código?</h3>
+                        <p>Aparece en la parte superior de cualquiera de tus recibos físicos de agua potable como <strong>"Código de Contador"</strong> o <strong>"No. de Medidor"</strong>.</p>
+                    </div>
+                    <div class="guide-card">
+                        <div class="guide-icon">📲</div>
+                        <h3>Fácil y sin contraseñas</h3>
+                        <p>No necesitas iniciar sesión ni crear una cuenta. Puedes guardar el enlace o compartirlo fácilmente por WhatsApp.</p>
+                    </div>
+                    <div class="guide-card">
+                        <div class="guide-icon">🏛️</div>
+                        <h3>Puntos de Pago</h3>
+                        <p>Tesorería Municipal en el Edificio Municipal. Horario: Lunes a Viernes de 8:00 AM a 4:30 PM.</p>
+                    </div>
+                </div>
+            </section>
+        }
+
+        <!-- Resultado de la Consulta -->
+        @if (contador()) {
+            <section class="results-container" id="printable-statement">
+
+                <!-- Barra de Acciones y Compartir -->
+                <div class="action-bar no-print">
+                    <div class="action-bar-left">
+                        <span class="status-label">Enlace de consulta pública listo para compartir:</span>
+                    </div>
+                    <div class="action-buttons">
+                        <a [href]="getWhatsAppShareUrl()" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+                            <svg class="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.299.144.347.491 1.2.534 1.288.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.087-.179.182-.077.357.101.174.453.748.971 1.209.668.594 1.232.778 1.405.865.174.087.275.072.376-.044.101-.116.433-.506.549-.679.116-.174.231-.145.39-.087.159.058 1.011.477 1.184.564.173.087.289.13.332.203.044.072.044.419-.1.824z"/>
+                            </svg>
+                            <span>Enviar por WhatsApp</span>
+                        </a>
+
+                        <button type="button" class="btn-copy" (click)="copyShareLink()">
+                            <span>📋</span>
+                            <span>{{ copiedLink() ? '¡Enlace copiado!' : 'Copiar enlace' }}</span>
+                        </button>
+
+                        <button type="button" class="btn-print" (click)="imprimirPagina()" title="Imprimir estado de cuenta oficial">
+                            <span>🖨️</span>
+                            <span>Imprimir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Banner de Solvencia o Morosidad -->
+                @if (isMoroso()) {
+                    <div class="status-banner moroso">
+                        <div class="status-icon">⚠️</div>
+                        <div class="status-info">
+                            <h2>Estado: Pendiente de Pago</h2>
+                            <p>Este medidor presenta <strong>{{ mesesAdeudadosCount() }} mes(es) pendiente(s)</strong> de pago. Te invitamos a ponerte al día para evitar suspensión del servicio.</p>
+                            @if (totalAdeudado() > 0) {
+                                <div class="debt-chip">
+                                    <span>Saldo adeudado:</span>
+                                    <strong>{{ formatCurrency(totalAdeudado()) }}</strong>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div class="status-banner solvente">
+                        <div class="status-icon">✅</div>
+                        <div class="status-info">
+                            <h2>Estado: ¡Solvente y al Día!</h2>
+                            <p>El servicio de agua potable para este contador se encuentra al corriente. ¡Gracias por tu puntual contribución al municipio!</p>
+                            <div class="solvent-chip">
+                                <span>Solvencia vigente</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Ficha del Abonado / Datos Generales del Contador -->
+                <div class="detail-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <span class="eyebrow">Datos Generales del Contador</span>
+                            <h3>Información del Abonado y Medidor</h3>
+                        </div>
+                        <button type="button" class="btn-print-mini no-print" (click)="imprimirPagina()">
+                            <span>🖨️ Imprimir</span>
+                        </button>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item highlight">
+                            <span class="info-label">Código de Contador</span>
+                            <span class="info-value code">{{ contador()?.['codigo_contador'] || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">No. Identificador (ID)</span>
+                            <span class="info-value">#{{ contador()?.['id_contador'] || contador()?.['id'] || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Propietario / Titular</span>
+                            <span class="info-value">{{ contador()?.['nombre_propietario'] || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">DPI</span>
+                            <span class="info-value">{{ contador()?.['dpi'] || 'No registrado' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">NIT</span>
+                            <span class="info-value">{{ contador()?.['nit'] || 'C/F' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Comunidad / Sector</span>
+                            <span class="info-value">{{ contador()?.['comunidad'] || 'Casco Urbano' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Estado del Servicio</span>
+                            <span class="info-value">
+                                <span class="badge" [class.badge-active]="contador()?.['estado'] === 'activo'">
+                                    {{ getEstado() | uppercase }}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha de Registro</span>
+                            <span class="info-value">{{ formatDate(contador()?.['created_at']) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalle Anual Mes a Mes -->
+                <div class="detail-card">
+                    <div class="card-header flex-header">
+                        <div>
+                            <span class="eyebrow">Desglose de Mensualidades</span>
+                            <h3>Calendario de Pagos del Año {{ selectedYear() }}</h3>
+                        </div>
+
+                        <!-- Selector de Año -->
+                        <div class="year-selector no-print">
+                            @for (year of availableYears; track year) {
+                                <button
+                                    type="button"
+                                    class="year-btn"
+                                    [class.active]="selectedYear() === year"
+                                    (click)="cambiarAno(year)"
+                                >
+                                    {{ year }}
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="months-summary-bar">
+                        <div class="stat-badge paid">
+                            <span class="dot"></span>
+                            <span>{{ mesesPagadosCount() }} Pagados</span>
+                        </div>
+                        <div class="stat-badge pending">
+                            <span class="dot"></span>
+                            <span>{{ monthsStatus().length - mesesPagadosCount() }} Pendientes</span>
+                        </div>
+                    </div>
+
+                    <!-- Cuadrícula de 12 Meses -->
+                    <div class="months-grid">
+                        @for (month of monthsStatus(); track month.mes) {
+                            <div class="month-card" [class.paid]="month.pagado" [class.unpaid]="month.vencido">
+                                <div class="month-header">
+                                    <span class="month-name">{{ month.nombre }}</span>
+                                    <span class="month-indicator">
+                                        @if (month.pagado) {
+                                            ✔
+                                        } @else if (month.vencido) {
+                                            ✖
+                                        } @else {
+                                            ○
+                                        }
+                                    </span>
+                                </div>
+                                <div class="month-body">
+                                    @if (month.pagado) {
+                                        <span class="tag-status tag-paid">Pagado</span>
+                                        @if (month.fechaPago) {
+                                            <span class="month-date">Fecha: {{ month.fechaPago }}</span>
+                                        }
+                                        @if (month.recibo) {
+                                            <span class="month-recibo">Recibo: #{{ month.recibo }}</span>
+                                        }
+                                    } @else if (month.vencido) {
+                                        <span class="tag-status tag-unpaid">Pendiente</span>
+                                        <span class="month-date alert">Vencido</span>
+                                    } @else {
+                                        <span class="tag-status tag-future">Por vencer</span>
+                                        <span class="month-date">Mes futuro</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Historial de Últimos Pagos -->
+                @if (paymentHistory().length > 0) {
+                    <div class="detail-card">
+                        <div class="card-header">
+                            <span class="eyebrow">Comprobantes Recientes</span>
+                            <h3>Historial de Pagos Registrados</h3>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="public-table">
+                                <thead>
+                                    <tr>
+                                        <th>No. Recibo</th>
+                                        <th>Período</th>
+                                        <th>Fecha Pago</th>
+                                        <th>Monto</th>
+                                        <th>Pagado Por</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (pago of paymentHistory(); track $index) {
+                                        <tr>
+                                            <td><strong>#{{ pago['numero_recibo'] || '-' }}</strong></td>
+                                            <td>{{ pagoMesAno(pago) }}</td>
+                                            <td>{{ formatDate(pago['fecha_pago'] || pago['created_at']) }}</td>
+                                            <td class="amount">{{ formatCurrency(pago['monto']) }}</td>
+                                            <td>{{ pago['pagado_por'] || '-' }}</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+
+                <!-- Tarjeta de Instrucciones para Pagos -->
+                <div class="info-banner no-print">
+                    <div class="info-banner-icon">💡</div>
+                    <div class="info-banner-content">
+                        <h4>¿Cómo realizar tus pagos?</h4>
+                        <p>
+                            Presenta tu código de contador <strong>{{ contador()?.['codigo_contador'] }}</strong> en la ventanilla de Tesorería Municipal. Se aceptan pagos en efectivo y transferencias bancarias según disponibilidad municipal.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botón de Impresión dedicado -->
+                <div class="print-action-card no-print">
+                    <div class="print-action-text">
+                        <strong>¿Necesitas tu estado de cuenta en papel o guardarlo en PDF?</strong>
+                        <p>Genera una versión imprimible con formato oficial del municipio.</p>
+                    </div>
+                    <button type="button" class="btn-print-large" (click)="imprimirPagina()">
+                        <span>🖨️ Imprimir Estado de Cuenta</span>
+                    </button>
+                </div>
+
+                <!-- Firma / Certificación para Impresión -->
+                <div class="print-only print-footer">
+                    <div class="print-row">
+                        <div class="print-stamp">
+                            <span>Sello Municipal</span>
+                        </div>
+                        <div class="print-signature">
+                            <div class="line"></div>
+                            <span>Firma Autorizada Tesorería</span>
+                        </div>
+                    </div>
+                    <p class="print-disclaimer">
+                        Documento emitido para fines informativos por el Sistema de Recaudación de Agua Potable · Fecha de consulta: {{ formatDate(selectedYear() + '-01-01') }}
+                    </p>
+                </div>
+            </section>
+        }
+    </main>
+
+    <!-- Footer Ciudadano -->
+    <footer class="public-footer no-print">
+        <div class="footer-inner">
+            <p><strong>Municipalidad de Santa Bárbara, Suchitepéquez</strong></p>
+            <p>Departamento de Agua Potable y Saneamiento · Sistema de Recaudación Web</p>
+            <div class="footer-links">
+                <a routerLink="/login" class="admin-login-link">Acceso para Personal Municipal →</a>
+            </div>
+        </div>
+    </footer>
+</div>

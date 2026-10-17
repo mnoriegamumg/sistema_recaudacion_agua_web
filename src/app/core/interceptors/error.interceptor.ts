@@ -11,6 +11,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req).pipe(
         catchError(error => {
             if (error?.status === 401) {
+                // Si la consulta es desde una ruta pública (como /consulta), no expulsar al login
+                if (router.url.includes('/consulta') || router.url.includes('/estado-cuenta')) {
+                    return throwError(() => error);
+                }
                 authService.logout();
                 router.navigate(['/login']);
             }

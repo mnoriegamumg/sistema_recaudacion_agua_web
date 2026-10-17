@@ -6,12 +6,16 @@ import { ContadoresComponent } from './pages/contadores/contadores';
 import { MorosidadComponent } from './pages/morosidad/morosidad';
 import { PagosComponent } from './pages/pagos/pagos';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
+import { ConsultaPublicaComponent } from './pages/consulta-publica/consulta-publica';
 import { AuthGuard } from './core/guards/auth.guard';
 import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
+    { path: 'consulta', component: ConsultaPublicaComponent },
+    { path: 'consulta/:codigo', component: ConsultaPublicaComponent },
+    { path: 'estado-cuenta-publico/:codigo', redirectTo: '/consulta/:codigo' },
     { 
         path: 'dashboard', 
         component: DashboardComponent,

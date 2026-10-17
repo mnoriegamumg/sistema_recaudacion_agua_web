@@ -66,8 +66,7 @@
                                     <td>{{ user.rol }}</td>
                                     <td>{{ isActive(user.activo) ? 'Sí' : 'No' }}</td>
                                     <td>{{ displayDate(user.created_at) }}</td>
-                                    <td>{{ displayDate(user.updated_at) }}</td>
-                                    <td><button class="link-button" type="button" (click)="openEditForm(user)">Editar</button></td>
+                                    <td class="row-actions"><button class="btn-action btn-action-edit" type="button" (click)="openEditForm(user)">✏️ Editar</button></td>
                                 </tr>
                             }
                         </tbody>

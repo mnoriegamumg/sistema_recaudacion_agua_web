@@ -40,9 +40,15 @@
                         <tr>@for (field of fields; track field.name) { <th>{{ field.label }}</th> }<th>Acciones</th></tr>
                     </thead>
                     <tbody>@for (record of records(); track $index) { <tr>@for (field of fields; track field.name) {
-                            <td>{{ display(record, field) }}</td> }<td class="row-actions"><button class="link-button" type="button"
-                                (click)="openEditForm(record)">Editar</button><button class="link-button print-link" type="button"
-                                (click)="openReceipt(record)">Imprimir</button></td>
+                            <td>{{ display(record, field) }}</td> }
+                            <td class="row-actions">
+                                <button class="btn-action btn-action-edit" type="button" (click)="openEditForm(record)" title="Editar registro de pago">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn-action btn-action-print" type="button" (click)="openReceipt(record)" title="Imprimir recibo">
+                                    🖨️ Imprimir
+                                </button>
+                            </td>
                         </tr> }</tbody>
                 </table>
             </div> }
